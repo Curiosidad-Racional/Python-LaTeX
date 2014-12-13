@@ -2895,12 +2895,12 @@ class ani2eps:
     def __init__(self, name = ""):
         if name == "":
             name = str(self)
-            self.name = "tmp_ltx/__delme__" + name[name.find("0x"):-1] + "___"
+            self.name = "__delme__" + name[name.find("0x"):-1] + "___"
         else:
-            self.name = "tmp_ltx/__delme__" + name + "___"
+            self.name = "__delme__" + name + "___"
         if not os.path.exists("tmp_ltx"):
             os.makedirs("tmp_ltx")
-        self.pic = open(self.name + ".ltx", "w")
+        self.pic = open("tmp_ltx/" + self.name + ".ltx", "w")
         self.pic.write( "% 'minimal' no permite tamaños de letra como \\Large. Para usarlos cambiar 'minimal' a 'article' u otros.\n" )
         self.pic.write( "\\documentclass[9pt,spanish]{minimal}\n" )
         self.pic.write( "\\usepackage[utf8]{inputenc}\n" )
@@ -2967,7 +2967,7 @@ class ani2eps:
         self.pic.write(r"\end{document}")
         self.pic.close()
         #call(["latex", "-interaction=nonstopmode", self.name + ".ltx"], stdout=FNULL, stderr=FNULL)
-        proc = Popen(["latex", "-output-directory=tmp_ltx", "-interaction=nonstopmode", "-file-line-error", self.name + ".ltx"], stdout=PIPE, stderr=FNULL)
+        proc = Popen(["latex", "-output-directory=tmp_ltx", "-interaction=nonstopmode", "-file-line-error", "tmp_ltx/" + self.name + ".ltx"], stdout=PIPE, stderr=FNULL)
         show = 0
         page = 0
         line = proc.stdout.readline()
@@ -2985,7 +2985,7 @@ class ani2eps:
             line = proc.stdout.readline()
         sys.stderr.write("\n")
         #call(["dvips", self.name + ".dvi", "-i", "-E", "-o", self.name], stdout=FNULL, stderr=FNULL)
-        proc = Popen(["dvips", self.name + ".dvi", "-i", "-E", "-o", self.name], stdout=FNULL, stderr=PIPE)
+        proc = Popen(["dvips", "tmp_ltx/" + self.name + ".dvi", "-i", "-E", "-o", "tmp_ltx/" + self.name], stdout=FNULL, stderr=PIPE)
         page = 0
         line = proc.stderr.readline()
         while line != b"":
@@ -2994,7 +2994,7 @@ class ani2eps:
                 sys.stderr.write("\r" + "dvips procesó la página " + str(page))
             line = proc.stderr.readline()
         sys.stderr.write("\n")
-        call(["fnf", self.name + "*[0-9]", "-e", "eps", "-n", "6"], stdout=FNULL, stderr=FNULL)
+        call(["fnf", "tmp_ltx/" + self.name + "*[0-9]", "-e", "eps", "-n", "6"], stdout=FNULL, stderr=FNULL)
         self.content = ""
 #############################################################
 #############################################################
@@ -3915,8 +3915,8 @@ class Animation:
         sys.stderr.write("\r" + "Procesando fotograma " + str(self.i+1) + " de " + str(self.points))
         if tl:
             name = str(self)
-            name = "tmp_ltx/__delme__" + name[name.find("0x"):-1]
-            timeline = open(name + ".tln", "w")
+            name = "__delme__" + name[name.find("0x"):-1]
+            timeline = open("tmp_ltx/" + name + ".tln", "w")
             # Fotograma de fondo
             pspicture.append( eval("'" + psset + "'") )
             pspicture.append( bpicture )
@@ -4272,8 +4272,8 @@ class Animation:
         else:
             cparam = ""
         if tl:
-            cparam += ",timeline=" + name + ".tln"
-        print(r"\animategraphics[controls"+cparam+"]{"+str(self.fps)+"}{"+pspicture.name+"}{000001}{"+"%06d"%(pspicture.number)+"}")
+            cparam += ",timeline=tmp_ltx/" + name + ".tln"
+        print(r"\animategraphics[controls"+cparam+"]{"+str(self.fps)+"}{"+"tmp_ltx/"+pspicture.name+"}{000001}{"+"%06d"%(pspicture.number)+"}")
         if tl:
             timeline.close()
     def limit_reg(self, x0, y0, vx, vy):

@@ -164,6 +164,7 @@ fi
 
 for file in "${LISTA[@]}"
 do
+  LAST_POSITION=$((${#LISTA[@]} - 1))
   if [ -f "$file.ltx" ]
   then
 
@@ -171,14 +172,14 @@ do
     then
       if [ ! -z $SHOW ]
       then
-        if [ ! -z $TEMP ]
+        if [ ! -z $TEMP ] || [ "$file" != "${LISTA[${LAST_POSITION}]}" ]
         then
           time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf" && "$RUN" "$file.pdf" &
         else
           time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf" && "$RUN" "$file.pdf" && rm "$DIR/__delme__"* "$file.dvi" "$file.ps" 2>/dev/null &
         fi
       else
-        if [ ! -z $TEMP ]
+        if [ ! -z $TEMP ] || [ "$file" != "${LISTA[${LAST_POSITION}]}" ]
         then
           time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf"
         else
@@ -188,14 +189,14 @@ do
     else
       if [ ! -z $SHOW ]
       then
-        if [ ! -z $TEMP ]
+        if [ ! -z $TEMP ] || [ "$file" != "${LISTA[${LAST_POSITION}]}" ]
         then
           time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf" && "$RUN" "$file.pdf" &
         else
           time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf" && "$RUN" "$file.pdf" && rm "$DIR/__delme__"* "$file.dvi" "$file.ps" 2>/dev/null &
         fi
       else
-        if [ ! -z $TEMP ]
+        if [ ! -z $TEMP ] || [ "$file" != "${LISTA[${LAST_POSITION}]}" ]
         then
           time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf"
         else
