@@ -1,0 +1,127 @@
+\begin{center}
+\pdfbookmark[0]{Circuito Y-Delta}{circuitoydelta}
+\large\scshape \underline{Circuito Y-$\Delta$}
+\end{center}
+
+\consoluciones
+
+
+
+
+««
+## a modificar
+grafo = {1:[2],2:[3],3:[1],4:[1,2,3]}
+geome = "regpol"
+nodes = list(set([ l for k in grafo.keys() for l in grafo[k] ] + list(grafo.keys())))
+nnodes = len(nodes)
+lines = len(find_all_wires(complete_graph(grafo)))
+edges = 0
+for k in grafo.values():
+    edges += len(k)
+Uccs = randint(1,3); Caps = randint(1,3-Uccs+1); Coils = randint(1,3-Caps+1)
+i = [ Symbol('i'+str(k+1)) for k in range(lines) ]
+q = [ Symbol('q'+str(k+1)) for k in range(lines) ]
+U = []; C = []; L = []
+if U == []:
+    randU = [ randint(1,100)*uV for k in range(Uccs) ]
+    randU += [ 0 for k in range(edges - Uccs) ]
+    shuffle(randU)
+    for k in grafo.keys():
+        U.append([])
+        for l in grafo[k]:
+            U[-1].append(randU.pop())
+if C == []:
+    randC = [ randint(1,100)*1e-4*uF for k in range(Caps) ]
+    randC += [ oo for k in range(edges - Caps) ]
+    shuffle(randC)
+    for k in grafo.keys():
+        C.append([])
+        for l in grafo[k]:
+            C[-1].append(randC.pop())
+if L == []:
+    randL = [ randint(1,100)*uH for k in range(Coils) ]
+    randL += [ 0 for k in range(edges - Coils) ]
+    shuffle(randL)
+    for k in grafo.keys():
+        L.append([])
+        for l in grafo[k]:
+            L[-1].append(randL.pop())
+R = []
+for k in grafo.keys():
+    R.append([])
+    for l in grafo[k]:
+        R[-1].append(randint(1,100)/10*uOhm)
+frec = 0*uHz
+»»
+
+
+
+\problema
+Resuelve el circuito y sus elementos, y halla la diferencia de
+potencial entre los puntos que delimitan cada arista.
+
+\begin{center}
+««
+circ = Circuit(grafo, geome, 2.*pi*frec)
+p(circ.as_str())
+»»
+\end{center}
+
+
+\begin{sol}
+««
+#variables = symbols('i1:'+str((edges - nnodes + 1)+1))
+ecV = circ.CycleEq
+ecI = circ.NodeEq
+ecU = circ.ReducedEq
+»»
+
+
+\begin{center}
+««
+p(circ.as_str(0.7, True), "\n")
+»»
+\end{center}
+
+\begin{center}
+««
+for k in range(circ.short_cycles):
+    p("\\framebox{\\begin{minipage}{0.5\\linewidth}")
+    p(circ.as_str(k,0.5, True))
+    p("\n\n\\scalebox{0.75}{$")
+    lp(Eq(ecV[k]))
+    p("$}")
+    p("\\end{minipage}}"+["","\\newline"][k%2])
+»»
+\end{center}
+
+
+El sistema de ecuaciones del circuito es:
+
+««
+ecV = list(map(lambda x: Eq(-x), ecV))
+ecI = list(map(lambda x: Eq(-x), ecI))
+»»
+
+$$««Matrix(ecV + ecI)»»$$
+
+
+Aplicando las ecuaciones de las intensidades:
+
+$$««Matrix(syst_subs(ecU,[],[],True))»»$$
+
+
+Resolviendo todo:
+
+$$
+««lp(circ.Solved,2)»»
+$$
+
+El potencial entre los bordes de cada cable:
+
+$$
+««lp(circ.UEdges,2)»»
+$$
+
+\end{sol}
+\clearpage
