@@ -1,0 +1,237 @@
+#!/bin/bash
+#
+TIMEFORMAT="%0lR real, %0lU user, %0lS sys"
+#NL=$'\n'
+if [ -z $(type -p acroread) ]
+then
+  RUN="evince"
+else
+  RUN="acroread"
+fi
+LTXERR="BEGIN{ show = 0 }{ if (\$0 ~ /^.*:[0-9]*:.*$/) { show = 1 }; if (show == 1) print \$0; if (\$0 ~ /^l\\.[0-9]* .*$/) { show = 0 }}"
+PTX=""
+SOL=""
+SHOW=""
+TEMP=""
+ONCE=""
+PAUSE=""
+DIR="tmp_ltx"
+PRM_TP=""
+for i in "$@"
+do
+  case "$PRM_TP" in
+  viewer)
+    RUN="$i"
+    PRM_TP=""
+    ;;
+  *)
+  case "$i" in
+  --viewer)
+    PRM_TP=viewer
+    ;;
+  -*)
+  for (( j=1; j<${#i}; j++ )); do
+    case "${i:$j:1}" in
+    s)
+      SOL="-s"
+      ;;
+    v)
+      SHOW="-v"
+      ;;
+    t)
+      TEMP="-t"
+      ;;
+    d)
+      DIR=""
+      ;;
+    1)
+      ONCE="-1"
+      ;;
+    p)
+      PAUSE="-p"
+      ;;
+    x)
+      if [ ! -z "$PRM_TP" ]
+      then
+        if [ ! -z $PAUSE ]
+	then
+	  read -t 100 -n 1 -r -p "Error: Separar opciones: $PRM_TP ${i:$j:1}"
+	else
+          echo "Error: Separar opciones: $PRM_TP ${i:$j:1}"	    
+	fi
+        exit 1
+      fi
+      PRM_TP=viewer
+      ;;
+    *)
+      if [ ! -z $PAUSE ]
+      then
+	read -t 100 -n 1 -r -p "Opción desconocida: ${i:$j:1}"
+      else
+	echo "Opción desconocida: ${i:$j:1}"	    
+      fi
+      exit 1
+      ;;
+    esac
+  done
+    ;;
+  *)
+  PTX="$i"
+    ;;
+  esac
+    ;;
+  esac
+done
+
+file=`echo $PTX | sed "s/\"//g" | sed "s/\.ptx$//"`
+
+if [ ! -z $DIR ]
+then
+  if [ ! -d "$DIR" ]
+  then
+    mkdir "$DIR" || (echo "No se pudo crear el directorio temporal $DIR. Puede que ya exista." && exit 1)
+  fi
+  cp "$file.ptx" "$DIR"
+  if [ $? -ne 0 ]
+  then
+    if [ ! -z $PAUSE ]
+    then
+      read -t 100 -n 1 -r -p "No se encuentra el archivo $file.ptx."
+    else
+      echo "No se encuentra el archivo $file.ptx."	    
+    fi
+    exit 1
+  fi
+  file="$DIR/$file"
+fi
+
+LISTA=("$file")
+if [ ! -z $SOL ]
+then
+  LISTA=("${LISTA[@]}" "$file - Sol")
+  if [ -f "$file.ptx" ]
+  then
+    sed "s/\\\\sinsoluciones//g; s/\\\\consoluciones//g" "$file.ptx" > "$file__tmp__.ptx"
+    time "$PYTHON_LATEX/bin/py2tex" "$file__tmp__.ptx" "$file__tmp__.ltx" 
+    if [ $? -ne 0 ]
+    then
+      if [ ! -z $PAUSE ]
+      then
+	read -t 100 -n 1 -r -p "Error al compilar $file.ptx."
+      else
+	echo "Error al compilar $file.ptx."
+      fi
+      exit 1
+    fi
+    sed "s/\\\\begin{document}/\\\\sinsoluciones\\n\\\\begin{document}/" "$file__tmp__.ltx" > "$file.ltx"
+    sed "s/\\\\begin{document}/\\\\consoluciones\\n\\\\begin{document}/" "$file__tmp__.ltx" > "$file - Sol.ltx"
+    rm "$file__tmp__.ptx" "$file__tmp__.ltx"
+  else
+    if [ ! -z $PAUSE ]
+    then
+      read -t 100 -n 1 -r -p "No se encuentra el archivo $file.ptx."
+    else
+      echo "No se encuentra el archivo $file.ptx."	    
+    fi
+    exit 1
+  fi
+else
+  if [ -f "$file.ptx" ]
+  then
+    time "$PYTHON_LATEX/bin/py2tex" "$file.ptx" "$file.ltx"
+    if [ $? -ne 0 ]
+    then
+      if [ ! -z $PAUSE ]
+      then
+	read -t 100 -n 1 -r -p "Error al compilar $file.ptx."
+      else
+	echo "Error al compilar $file.ptx."	    
+      fi
+      exit 1
+    fi
+  else
+    if [ ! -z $PAUSE ]
+    then
+      read -t 100 -n 1 -r -p "No se encuentra el archivo $file.ptx."
+    else
+      echo "No se encuentra el archivo $file.ptx."	    
+    fi
+    exit 1
+  fi
+fi
+
+
+
+for file in "${LISTA[@]}"
+do
+  if [ -f "$file.ltx" ]
+  then
+
+    if [ ! -z $ONCE ]
+    then
+      if [ ! -z $SHOW ]
+      then
+        if [ ! -z $TEMP ]
+        then
+          time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf" && "$RUN" "$file.pdf" &
+        else
+          time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf" && "$RUN" "$file.pdf" && rm "$DIR/__delme__"* "$file.dvi" "$file.ps" 2>/dev/null &
+        fi
+      else
+        if [ ! -z $TEMP ]
+        then
+          time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf"
+        else
+          time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf" && rm "$DIR/__delme__"* "$file.dvi" "$file.ps" 2>/dev/null
+        fi
+      fi
+    else
+      if [ ! -z $SHOW ]
+      then
+        if [ ! -z $TEMP ]
+        then
+          time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf" && "$RUN" "$file.pdf" &
+        else
+          time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf" && "$RUN" "$file.pdf" && rm "$DIR/__delme__"* "$file.dvi" "$file.ps" 2>/dev/null &
+        fi
+      else
+        if [ ! -z $TEMP ]
+        then
+          time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf"
+        else
+          time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time latex -jobname "$file" -interaction=nonstopmode -file-line-error "$file.ltx" | awk "$LTXERR" && time dvips -q "$file.dvi" -o "$file.ps" && time ps2pdf14 -sOwnerPassword=/Este_material_pertenece_a_Curiosidad_Racional/ -dPermissions=-60 -dAutoRotatePages=/None "$file.ps" "$file.pdf" && rm "$DIR/__delme__"* "$file.dvi" "$file.ps" 2>/dev/null
+        fi
+      fi
+    fi
+
+  else
+    if [ ! -z $PAUSE ]
+    then
+      read -t 100 -n 1 -r -p "No se ha generado el archivo latex $file.ltx."
+    else
+      echo "No se ha generado el archivo latex $file.ltx."	    
+    fi
+    exit 1
+  fi
+
+  if [ ! -z $DIR ]
+  then
+    wait
+    cp "$file.pdf" .
+    if [ $? -ne 0 ]
+    then
+      if [ ! -z $PAUSE ]
+      then
+	read -t 100 -n 1 -r -p "No se encuentra el archivo final $file.pdf."
+      else
+	echo "No se encuentra el archivo final $file.pdf."	    
+      fi
+      exit 1
+    fi
+  fi
+done
+
+if [ ! -z $PAUSE ]
+then
+  read -t 100 -n 1 -r -p "... py2pdf ha finalizado."
+fi
