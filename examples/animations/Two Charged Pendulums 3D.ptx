@@ -1,0 +1,82 @@
+\begin{center}
+\pdfbookmark[0]{Doble Péndulo}{doblependulo}
+\large\scshape \underline{Doble Péndulo}
+\end{center}
+
+
+% Para encontrar la ecuación de Euler-Lagrange:
+%  phi1, v_phi1 = symbols('phi1 v_phi1', cls=Function)
+%  theta1, v_theta1 = symbols('theta1 v_theta1', cls=Function)
+%  phi2, v_phi2 = symbols('phi2 v_phi2', cls=Function)
+%  theta2, v_theta2 = symbols('theta2 v_theta2', cls=Function)
+%  l1, l2, m1, m2, q1, q2, g = symbols('l1, l2, m1, m2, q1, q2, g')
+%  x1 = l1*sin(theta1(t))*cos(phi1(t))
+%  y1 = l1*sin(theta1(t))*sin(phi1(t))
+%  z1 = l1*cos(theta1(t))
+%  L1 = m1*(diff(x1,t)**2 + diff(y1,t)**2 + diff(z1,t)**2)/2 - g*m1*z1
+%  x2 = l2*sin(theta2(t))*cos(phi2(t))
+%  y2 = l2*sin(theta2(t))*sin(phi2(t))
+%  z2 = l2*cos(theta2(t))
+%  L2 = m2*(diff(x2,t)**2 + diff(y2,t)**2 + diff(z2,t)**2)/2 - g*m2*z2
+%  L  = L1 + L2 - q1*q2/sqrt((-x1 + x2)**2 + (-y1 + y2)**2 + (-z1 + z2)**2)
+
+                                  
+
+««
+l1 = 1.                                                         
+l2 = 1.
+m1 = 1.
+m2 = 1.
+q1 = 5. # 1 = sqrt(9e9) C
+q2 = 5.
+g  = 9.81
+v_phi10   = 0.
+v_theta10 = 0.
+phi10     = 1.
+theta10   = 2.
+v_phi20   = 0.
+v_theta20 = 0.
+phi20     = 0.
+theta20   = 3.
+T = 60
+S = 20
+arg = pi/4 + 2*pi*nneg(t-S)/(T-S)
+H = g*l1*m1*cos(theta1) + g*l2*m2*cos(theta2) + l1**2*m1*v_phi1**2*sin(theta1)**2/2 + l1**2*m1*v_theta1**2/2 + l2**2*m2*v_phi2**2*sin(theta2)**2/2 + l2**2*m2*v_theta2**2/2 + q1*q2/sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)
+»»
+               
+««
+anim = Animation({x0:0,y0:0,z0:0},
+{
+a_phi1: (-2*l1**3*m1*v_phi1*v_theta1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*cos(theta1) + 4*l1**2*l2*m1*v_phi1*v_theta1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)*sin(theta2)*cos(theta1)*cos(phi1 - phi2) + 4*l1**2*l2*m1*v_phi1*v_theta1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*cos(theta1)**2*cos(theta2) - 2*l1*l2**2*m1*v_phi1*v_theta1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*cos(theta1) + l2*q1*q2*sin(theta2)*sin(phi1 - phi2))/(l1**3*m1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1) - 2*l1**2*l2*m1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)**2*sin(theta2)*cos(phi1 - phi2) - 2*l1**2*l2*m1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)*cos(theta1)*cos(theta2) + l1*l2**2*m1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)),
+v_phi1: v_phi10,
+phi1: phi10,
+a_theta1: -(-g*l1**2*m1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1) + 2*g*l1*l2*m1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)**2*sin(theta2)*cos(phi1 - phi2) + 2*g*l1*l2*m1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)*cos(theta1)*cos(theta2) - g*l2**2*m1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1) - l1**3*m1*v_phi1**2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)*cos(theta1) + 2*l1**2*l2*m1*v_phi1**2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)**2*sin(theta2)*cos(theta1)*cos(phi1 - phi2) + 2*l1**2*l2*m1*v_phi1**2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)*cos(theta1)**2*cos(theta2) - l1*l2**2*m1*v_phi1**2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)*cos(theta1) - l2*q1*q2*sin(theta1)*cos(theta2) + l2*q1*q2*sin(theta2)*cos(theta1)*cos(phi1 - phi2))/(l1**3*m1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2) - 2*l1**2*l2*m1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1**2*l2*m1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*cos(theta1)*cos(theta2) + l1*l2**2*m1*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)),
+v_theta1: v_theta10,
+theta1: theta10,
+rho1: l1,
+"shadows": "xyz",
+'draw_track': 'red'
+}
+,
+{
+a_phi2: -(2*l1**2*l2*m2*v_phi2*v_theta2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*cos(theta2) - 4*l1*l2**2*m2*v_phi2*v_theta2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)*sin(theta2)*cos(theta2)*cos(phi1 - phi2) - 4*l1*l2**2*m2*v_phi2*v_theta2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*cos(theta1)*cos(theta2)**2 + l1*q1*q2*sin(theta1)*sin(phi1 - phi2) + 2*l2**3*m2*v_phi2*v_theta2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*cos(theta2))/(l1**2*l2*m2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta2) - 2*l1*l2**2*m2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)*sin(theta2)**2*cos(phi1 - phi2) - 2*l1*l2**2*m2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta2)*cos(theta1)*cos(theta2) + l2**3*m2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta2)),
+v_phi2: v_phi20,
+phi2: phi20,
+a_theta2: -(-g*l1**2*m2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta2) + 2*g*l1*l2*m2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)*sin(theta2)**2*cos(phi1 - phi2) + 2*g*l1*l2*m2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta2)*cos(theta1)*cos(theta2) - g*l2**2*m2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta2) - l1**2*l2*m2*v_phi2**2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta2)*cos(theta2) + 2*l1*l2**2*m2*v_phi2**2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)*sin(theta2)**2*cos(theta2)*cos(phi1 - phi2) + 2*l1*l2**2*m2*v_phi2**2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta2)*cos(theta1)*cos(theta2)**2 + l1*q1*q2*sin(theta1)*cos(theta2)*cos(phi1 - phi2) - l1*q1*q2*sin(theta2)*cos(theta1) - l2**3*m2*v_phi2**2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta2)*cos(theta2))/(l1**2*l2*m2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2) - 2*l1*l2**2*m2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2**2*m2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)*cos(theta1)*cos(theta2) + l2**3*m2*sqrt(l1**2 - 2*l1*l2*sin(theta1)*sin(theta2)*cos(phi1 - phi2) - 2*l1*l2*cos(theta1)*cos(theta2) + l2**2)),
+v_theta2: v_theta20,
+theta2: theta20,
+rho2: l2,
+"shadows": "xyz",
+'draw_track': 'orange'}
+)
+anim.evol(0, T, fps=5, prec=10)
+anim.insert(0,1,"line")
+anim.insert(1,"circle*{0.05}")
+anim.insert(0,2,"line")
+anim.insert(2,"circle*{0.05}")
+#anim.insert(-1,"put{$E = «H»$}")
+anim.animate(viewpoint = [30*sin(arg), 30*cos(arg), 25], tl=False)
+»»
+
+
+
