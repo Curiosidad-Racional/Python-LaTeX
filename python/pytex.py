@@ -1709,7 +1709,7 @@ class Circuit:
                 style = "regpol"
             else:
                 style = "grid"
-        if style == "repo":
+        if style == "regpol":
             self.pstcirc += self.repocirc(len(self.nodes)-1, 3)
         elif style == "grid":
             base = sqrt(self.max_node)
