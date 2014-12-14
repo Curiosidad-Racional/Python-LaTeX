@@ -1,6 +1,16 @@
 # Python-LaTeX
 
-I used `python3.4` and `TeX Live 2013`.
+Python-LaTeX is a python written progran that process .ptx
+files with latex code and, between this, python code
+embedded with '««' '»»' delimiters. Python-LaTeX output
+latex file.
+
+## Dependences
+
+- TeX Live 2013
+- python3
+- scipy
+- numpy
 
 ## Setup
 
