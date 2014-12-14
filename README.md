@@ -1,5 +1,7 @@
 # Python-LaTeX
 
+I used `python3.4` and `TeX Live 2013`.
+
 ## Setup
 
 Add two lines to `.bashrc` file.

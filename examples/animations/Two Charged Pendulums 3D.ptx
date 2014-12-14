@@ -70,12 +70,10 @@ rho2: l2,
 'draw_track': 'orange'}
 )
 anim.evol(0, T, fps=5, prec=10)
-anim.insert(0,1,"line")
-anim.insert(1,"circle*{0.05}")
-anim.insert(0,2,"line")
-anim.insert(2,"circle*{0.05}")
+anim.insert(0,1,"pendulum{0.1,0.4}")
+anim.insert(0,2,"pendulum{0.1,0.4}")
 #anim.insert(-1,"put{$E = «H»$}")
-anim.animate(viewpoint = [30*sin(arg), 30*cos(arg), 25], tl=False)
+anim.animate(viewpoint = [30*sin(arg), 30*cos(arg), 25], tl=False, tail=600)
 »»
 
 
