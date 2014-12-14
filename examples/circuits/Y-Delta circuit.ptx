@@ -21,36 +21,17 @@ for k in grafo.values():
 Uccs = randint(1,3); Caps = randint(1,3-Uccs+1); Coils = randint(1,3-Caps+1)
 i = [ Symbol('i'+str(k+1)) for k in range(lines) ]
 q = [ Symbol('q'+str(k+1)) for k in range(lines) ]
-U = []; C = []; L = []
-if U == []:
-    randU = [ randint(1,100)*uV for k in range(Uccs) ]
-    randU += [ 0 for k in range(edges - Uccs) ]
-    shuffle(randU)
-    for k in grafo.keys():
-        U.append([])
-        for l in grafo[k]:
-            U[-1].append(randU.pop())
-if C == []:
-    randC = [ randint(1,100)*1e-4*uF for k in range(Caps) ]
-    randC += [ oo for k in range(edges - Caps) ]
-    shuffle(randC)
-    for k in grafo.keys():
-        C.append([])
-        for l in grafo[k]:
-            C[-1].append(randC.pop())
-if L == []:
-    randL = [ randint(1,100)*uH for k in range(Coils) ]
-    randL += [ 0 for k in range(edges - Coils) ]
-    shuffle(randL)
-    for k in grafo.keys():
-        L.append([])
-        for l in grafo[k]:
-            L[-1].append(randL.pop())
-R = []
-for k in grafo.keys():
-    R.append([])
-    for l in grafo[k]:
-        R[-1].append(randint(1,100)/10*uOhm)
+randU = [ randint(1,100)*uV for k in range(Uccs) ]
+randU += [ 0 for k in range(edges - Uccs) ]
+shuffle(randU)
+randC = [ randint(1,100)*1e-4*uF for k in range(Caps) ]
+randC += [ oo for k in range(edges - Caps) ]
+shuffle(randC)
+randL = [ randint(1,100)*uH for k in range(Coils) ]
+randL += [ 0 for k in range(edges - Coils) ]
+shuffle(randL)
+randR = [ randint(1,100)/10*uOhm for k in range(edges) ]
+data = {'U':randU, 'C':randC, 'L':randL, 'R':randR, 'i':i, 'q':q}
 frec = 0*uHz
 »»
 
@@ -62,7 +43,7 @@ potencial entre los puntos que delimitan cada arista.
 
 \begin{center}
 ««
-circ = Circuit(grafo, geome, 2.*pi*frec)
+circ = Circuit(grafo, "regpol", 2.*pi*0, data)
 p(circ.as_str())
 »»
 \end{center}

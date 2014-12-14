@@ -1,2 +1,3 @@
 #!/bin/bash
+set -e
 python3 "$PYTHON_LATEX/python/pytex.py" "$@"

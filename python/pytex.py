@@ -1683,7 +1683,13 @@ class Circuit:
         self.def_omega = False
         for param in params:
             if isinstance(param, dict):
-                graph = param
+                first_key = list(param.keys())[0]
+                if isinstance(first_key, str):
+                    data = param
+                elif isinstance(first_key, int):
+                    graph = param
+                else:
+                    sys.exit("Error: incompatible dictionary key type. Dict = " + str(param))
             elif isinstance(param, str):
                 style = param
             elif isinstance(param, (float, Float, un.Unit, Mul, Number)):
@@ -1691,6 +1697,7 @@ class Circuit:
                 self.def_omega = True
         s_omega = Symbol('omega',real=True)
         self.graph = graph
+        self.organize_data(data)
         self.complete = complete_graph(self.graph)
         self._abc_ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         self.nodes = list(set([ k for l in list(graph.keys()) for k in graph[l] ] + list(graph.keys())))
@@ -1725,6 +1732,8 @@ class Circuit:
                 base = floor(base)
                 high = ceiling(self.max_node/base)
             self.pstcirc += self.gridcirc(base, high, 3)
+        else:
+            sys.exit("Error: style of circuit must be in [\"regpol\", \"grid\"]")
         # Obtiene los ciclos más cortos.
         all_cycles = []
         all_sets = []
@@ -1821,6 +1830,49 @@ class Circuit:
         X = (A**-1*B).evalf(digits)
         self.Solved = {system_vars[k]: X[k]*uA for k in range(len(system_vars))}
         self.UEdges = {"U_{"+self._abc_[self.nodes.index(k)]+self._abc_[self.nodes.index(l)]+"}": evalf(subs(erase_units(self.Edges[list(self.graph.keys()).index(l)][self.graph[l].index(k)]), erase_units(self.Solved)), digits)*uV for l in list(self.graph.keys()) for k in self.graph[l] }
+    ## Guarda las magnitudes del circuito en el formato adecuado
+    def organize_data(self, data):
+        self.i = data['i']
+        self.q = data['q']
+        def plain_list(data):
+            result = True
+            for dat in data:
+                if isinstance(dat, list):
+                    result = False
+            return result
+        if plain_list(data['U']):
+            self.U = []
+            for k in self.graph.keys():
+                self.U.append([])
+                for l in self.graph[k]:
+                    self.U[-1].append(data['U'].pop())
+        else:
+            self.U = data['U']
+        if plain_list(data['C']):
+            self.C = []
+            for k in self.graph.keys():
+                self.C.append([])
+                for l in self.graph[k]:
+                    self.C[-1].append(data['C'].pop())
+        else:
+            self.C = data['C']
+        if plain_list(data['L']):
+            self.L = []
+            for k in self.graph.keys():
+                self.L.append([])
+                for l in self.graph[k]:
+                    self.L[-1].append(data['L'].pop())
+        else:
+            self.L = data['L']
+        if plain_list(data['R']):
+            self.R = []
+            for k in self.graph.keys():
+                self.R.append([])
+                for l in self.graph[k]:
+                    self.R[-1].append(data['R'].pop())
+        else:
+            self.R = data['R']
+    ## Devuelve el gráfico del circuito en latex
     def as_str(self, *params):
         cycle = -1
         scale = 0.75
@@ -1852,7 +1904,7 @@ class Circuit:
         if scale != 1.:
             result = "\\scalebox{" + str(scale) + "}{" + result + "}"
         return result
-    # Define una malla de puntos para empezar a poner componentes.
+    ## Define una malla de puntos para empezar a poner componentes.
     def gridcirc(self, _circ_x_, _circ_y_, factor = 1):
         factor *= 2.2
         _circ_x_ = int(_circ_x_)
@@ -1868,6 +1920,7 @@ class Circuit:
                     #result += "\\qdisk("+self._abc_[label]+"){2pt}"
                     label += 1
         return result
+    ## Define un polígono regular de puntos para empezar a poner componentes.
     def repocirc(self, lados, radio, angulo = 0):
         radio *= 2.3
         result = "(-" + str((radio) + 1) + ",-" + str((radio) + 1) + ")"
@@ -1882,8 +1935,8 @@ class Circuit:
         result += "\n\\uput[-45](" + self._abc_[self.nnodes-1] + "){" + self._abc_[self.nnodes-1] + "}"
         #result += "\\qdisk("+self._abc_[label]+"){2pt}"
         return result
-    # Devuelve el código latex de un cable con componentes aleatorios.
-    # str latex = multidipole(i)
+    ## Devuelve el código latex de un cable con componentes aleatorios.
+    ## str latex = multidipole(i)
     def multidipole(self, index, begin, end, components = ["U","i","R","C","L"]):
         if isinstance(components, list):
             shuffle(components)
@@ -1906,35 +1959,35 @@ class Circuit:
             sig = -1
         for k in range(len(components)):
             if components[k] == "U":
-                if U[begin][end] != 0:
-                    result += "\n\\Ucc[labelangle=:U,labelInside=2]{$\\color{palatinateblue}"+latex(physics_format(U[begin][end]))+"$}"
+                if self.U[begin][end] != 0:
+                    result += "\n\\Ucc[labelangle=:U,labelInside=2]{$\\color{palatinateblue}"+latex(physics_format(self.U[begin][end]))+"$}"
                     if self.equations:
-                        self.Edges[begin][end] += sig*U[begin][end]
+                        self.Edges[begin][end] += sig*self.U[begin][end]
             if components[k] == "i":
-                if (not isinstance(i[index], Symbol))&(i[index] != 0):
-                    result += "\n\\Ucc[labelangle=:U,labelInside=3]{$\\color{palatinateblue}"+latex(physics_format(i[index]))+"$}"
+                if (not isinstance(self.i[index], Symbol))&(self.i[index] != 0):
+                    result += "\n\\Ucc[labelangle=:U,labelInside=3]{$\\color{palatinateblue}"+latex(physics_format(self.i[index]))+"$}"
                     if self.equations:
                         self.Edges[begin][end] += sig*Symbol('U_{i_{'+self._abc_[begin]+","+self._abc_[self.nodes.index(self.graph[list(self.graph.keys())[begin]][end])]+'}}')
             if components[k] == "R":
-                if R[begin][end] != 0:
-                    result += "\n\\resistor[labelangle=:U]{$\color{palatinateblue}"+latex(physics_format(R[begin][end]))+"$}"
+                if self.R[begin][end] != 0:
+                    result += "\n\\resistor[labelangle=:U]{$\color{palatinateblue}"+latex(physics_format(self.R[begin][end]))+"$}"
                     if self.equations:
-                        self.Edges[begin][end] += -sig*R[begin][end]*i[index]
+                        self.Edges[begin][end] += -sig*self.R[begin][end]*self.i[index]
             if components[k] == "L":
-                if L[begin][end] != 0:
-                    result += "\n\\coil[labelangle=:U,dipolestyle=curved]{$\color{palatinateblue}"+latex(physics_format(L[begin][end]))+"$}"
+                if self.L[begin][end] != 0:
+                    result += "\n\\coil[labelangle=:U,dipolestyle=curved]{$\color{palatinateblue}"+latex(physics_format(self.L[begin][end]))+"$}"
                     if self.equations:
                         if self.def_omega:
                                 # En continua una inductancia es un cable.
                                 # no se hace nada.
                             if not self.omega == 0:
-                                self.Edges[begin][end] += sig*I*i[index]*self.omega*L[begin][end]
+                                self.Edges[begin][end] += sig*I*self.i[index]*self.omega*self.L[begin][end]
                         else:
-                            self.Edges[begin][end] += sig*I*i[index]*Symbol('omega',real=True)*L[begin][end]
+                            self.Edges[begin][end] += sig*I*self.i[index]*Symbol('omega',real=True)*self.L[begin][end]
             if components[k] == "C":
-                if 1/C[begin][end] != 0:
-                    result += "\n\\capacitor[labelangle=:U,intensitylabel=$"+latex(physics_format(q[index]))+"$"
-                    capacity = float(erase_units(C[begin][end]))
+                if 1/self.C[begin][end] != 0:
+                    result += "\n\\capacitor[labelangle=:U,intensitylabel=$"+latex(physics_format(self.q[index]))+"$"
+                    capacity = float(erase_units(self.C[begin][end]))
                     if abs(capacity) < 1e-4:
                         capacity *= 1e6*un.Unit("micro Faraday", "\\;\\mu F")
                     elif abs(capacity) < 1e-1:
@@ -1945,12 +1998,12 @@ class Circuit:
                     if self.equations:
                         if self.def_omega:
                             if self.omega == 0:
-                                self.Edges[begin][end] += -sig*q[index]/C[begin][end]
-                                self.IntensityEq.update({i[index]: 0})
+                                self.Edges[begin][end] += -sig*self.q[index]/self.C[begin][end]
+                                self.IntensityEq.update({self.i[index]: 0})
                             else:
-                                self.Edges[begin][end] += sig*I*i[index]/(self.omega*C[begin][end])
+                                self.Edges[begin][end] += sig*I*self.i[index]/(self.omega*self.C[begin][end])
                         else:
-                            self.Edges[begin][end] += sig*I*i[index]/(Symbol('omega',real=True)*C[begin][end])
+                            self.Edges[begin][end] += sig*I*self.i[index]/(Symbol('omega',real=True)*self.C[begin][end])
         result += "\n\\wire{}"
         return result
 #    def iNodeEquations(self):
