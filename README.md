@@ -1,6 +1,6 @@
 # Python-LaTeX
 
-Python-LaTeX is a python written progran that process .ptx
+Python-LaTeX is a program written in python that process .ptx
 files with latex code and, between this, python code
 embedded with '««' '»»' delimiters. Python-LaTeX output
 latex file.
