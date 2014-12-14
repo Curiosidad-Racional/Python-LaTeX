@@ -1,0 +1,150 @@
+««
+seed(7244234566744)
+»»
+
+
+\begin{center}
+\pdfbookmark[0]{Naturales}{naturales}
+\large\scshape \underline{Naturales}
+\end{center}
+
+
+
+
+««
+coef0 = 15
+coef1 = 200
+prim  = primes(coef0)
+def f_tmp(maxim):
+    global prim
+    result = 1
+    while result <= maxim:
+        tmp = choice(prim)
+        result *= tmp
+    return int(result/tmp)
+»»
+\problema
+Factoriza los siguientes números:
+
+««
+tmp = f_tmp(coef1)
+»»
+\apartado
+$««tmp»»$
+
+\begin{sol}
+$$««lfactor(tmp)»»$$
+\end{sol}
+
+««
+tmp = f_tmp(coef1)
+»»
+\apartado
+$««tmp»»$
+
+\begin{sol}
+$$««lfactor(tmp)»»$$
+\end{sol}
+
+
+««
+tmp = f_tmp(coef1)
+»»
+\apartado
+$««tmp»»$
+
+\begin{sol}
+$$««lp(lfactor(tmp))»»$$
+\end{sol}
+
+
+
+
+
+
+
+
+
+««
+def f_tmp():
+    tmp = [ 0 for i in range(4) ]
+    tmp[randrange(len(tmp))] = randrange(2)
+    return 2**randrange(4)*3**randrange(4)*5**randrange(3)*7**randrange(2)*11**tmp[0]*13**tmp[1]*17**tmp[2]*19**tmp[3]
+»»
+\problema
+Halla el m.c.m. y el m.c.d.:
+
+««
+x = f_tmp()
+y = f_tmp()
+z = f_tmp()
+»»
+\apartado
+$««x»»,\,««y»»,\,««z»»$.
+
+\begin{sol}
+««
+sol1 = lcm([x,y,z])
+sol2 = gcd([x,y,z])
+»»
+$$ m.c.m. = ««lfactor(sol1)»» = ««sol1»» 
+\quad m.c.d. = ««lfactor(sol2)»» = ««sol2»» $$
+\end{sol}
+
+
+
+
+
+
+
+
+
+
+
+
+««coef0 = 40;coef1 = 130»»
+\problema
+Lista los divisores de los siguientes números:
+
+««
+x=randrange(coef0,coef1)
+»»
+\apartado
+$««x»»$
+
+\begin{sol}
+$$««divisors(x)»»$$
+\end{sol}
+
+
+««
+x=randrange(coef0,coef1)
+»»
+\apartado
+$««x»»$
+
+\begin{sol}
+$$««divisors(x)»»$$
+\end{sol}
+
+
+««
+x=randrange(coef0,coef1)
+»»
+\apartado
+$««x»»$
+
+\begin{sol}
+$$««lp(divisors(x))»»$$
+\end{sol}
+
+
+««
+x=randrange(coef0,coef1)
+»»
+\apartado
+$««x»»$
+
+\begin{sol}
+$$««divisors(x)»»$$
+\end{sol}

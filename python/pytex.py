@@ -1267,6 +1267,12 @@ def coprimes(_x, _y, _num = 2):
     if _find < _num:
         sys.exit("Error: coprimes: Insuficientes coprimos en el intervalo. Línea: " + str(_nline_))
     return _coprimes
+def divisors(number):
+    result = []
+    for i in range(1,number):
+        if (number % i == 0):
+            result.append(i)
+    return result
 # Deja el sistema 'system' en términos de las variables
 # 'variables' gracias a las ecuaciones 'equations'.
 # list Eq = syst_subs( list system, list equations, list variables )

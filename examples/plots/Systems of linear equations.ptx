@@ -1,0 +1,242 @@
+««
+seed(84578373)
+»»
+
+
+\begin{center}
+\pdfbookmark[0]{Sistemas de Ecuaciones}{sistemasdeecuaciones}
+\large\scshape \underline{Sistemas de Ecuaciones}
+\end{center}
+
+
+
+% Sistema de ecuaciones con coeficientes enteros.
+\problema
+Encuentra la solución del siguiente sistema:
+
+««
+rd = list(range(1,10))
+shuffle(rd)
+solx = rd[0]/rd[1]
+soly = rd[2]/rd[3]
+system = sol2lin([solx, soly], layer=100, linears=2)
+»»
+
+$$\left\{ \begin{split}
+««system[0]»»\\
+««system[1]»»\end{split}\right.$$
+
+
+\begin{sol}
+\begin{center}
+\psset{Dx=2,Dy=2,xsubticks=2,ysubticks=2,
+xAxisLabel=x,yAxisLabel=\textcolor{blue}{$««system[0]»»$} \textcolor{red}{$\qquad ««system[1]»»$},
+yMaxValue=10,algebraic=true,plotpoints=1000}
+\begin{psgraph}(0,0)(-10,-10)(10,10){7cm}{7cm} % Corchete escala trigonométrica
+\psplot[linecolor=blue]{-10}{10}{««str(solve(system[0],y)[0])»»}
+\psplot[linecolor=red]{-10}{10}{««str(solve(system[1],y)[0])»»}
+\pscircle*[linecolor=black,fillcolor=black](««solx»»,««soly»»){0.2}
+\rput[««(solx<0) and "r" or "l"»»««(solx<0) and "t" or "b"»»](««solx»»,««soly»»){$\left(««Rational(rd[0],rd[1])»»,\,««Rational(rd[2],rd[3])»»\right)$}
+\end{psgraph}
+\end{center}
+
+$$=««{x: Rational(rd[0],rd[1]), y: Rational(rd[2],rd[3])}»»$$
+\end{sol}
+
+
+
+
+
+% Sistema de ecuaciones con coeficientes fraccionarios.
+\problema
+Encuentra la solución del siguiente sistema:
+
+««
+rd = list(range(1,10))
+shuffle(rd)
+solx = rd[0]/rd[1]
+soly = rd[2]/rd[3]
+system = sol2lin([solx, soly], layer=100, linears=2, equation=False)
+»»
+
+$$\left\{ \begin{aligned}
+««Rational(system[0][0],rd[4])*x + Rational(system[0][1],rd[4])*y»»&=««Rational(-system[0][2],rd[4])»»\\
+««Rational(system[1][0],rd[5])*x + Rational(system[1][1],rd[5])*y»»&=««Rational(-system[1][2],rd[5])»»
+\end{aligned}\right.$$
+
+
+\begin{sol}
+\begin{center}
+\psset{Dx=2,Dy=2,xsubticks=2,ysubticks=2,
+xAxisLabel=x,yAxisLabel=\textcolor{blue}{$««Rational(system[0][0],rd[4])*x + Rational(system[0][1],rd[4])*y»»=««Rational(-system[0][2],rd[4])»»$} \textcolor{red}{$\qquad ««Rational(system[1][0],rd[5])*x + Rational(system[1][1],rd[5])*y»»=««Rational(-system[1][2],rd[5])»»$},
+yMaxValue=10,algebraic=true,plotpoints=1000}
+\begin{psgraph}(0,0)(-10,-10)(10,10){7cm}{7cm} % Corchete escala trigonométrica
+\psplot[linecolor=blue]{-10}{10}{««str(-(system[0][0]*x+system[0][2])/system[0][1])»»}
+\psplot[linecolor=red]{-10}{10}{««str(-(system[1][0]*x+system[1][2])/system[1][1])»»}
+\pscircle*[linecolor=black,fillcolor=black](««solx»»,««soly»»){0.2}
+\rput[««(solx<0) and "r" or "l"»»««(solx<0) and "t" or "b"»»](««solx»»,««soly»»){$\left(««Rational(rd[0],rd[1])»»,\,««Rational(rd[2],rd[3])»»\right)$}
+\end{psgraph}
+\end{center}
+
+$$=««{x: Rational(rd[0],rd[1]), y: Rational(rd[2],rd[3])}»»$$
+\end{sol}
+
+
+
+
+
+
+
+
+
+
+% Sistema de ecuaciones con coeficientes enteros.
+\problema
+Encuentra la solución del siguiente sistema:
+
+««
+rd = list(range(1,10))
+shuffle(rd)
+solx = rd[0]/rd[1]
+soly = rd[2]/rd[3]
+system = sol2lin([solx, soly], layer=100, linears=2)
+»»
+
+$$\left\{ \begin{split}
+««system[0]»»\\
+««system[1]»»\end{split}\right.$$
+
+
+\begin{sol}
+\begin{center}
+\psset{Dx=2,Dy=2,xsubticks=2,ysubticks=2,
+xAxisLabel=x,yAxisLabel=\textcolor{blue}{$««system[0]»»$} \textcolor{red}{$\qquad ««system[1]»»$},
+yMaxValue=10,algebraic=true,plotpoints=1000}
+\begin{psgraph}(0,0)(-10,-10)(10,10){7cm}{7cm} % Corchete escala trigonométrica
+\psplot[linecolor=blue]{-10}{10}{««str(solve(system[0],y)[0])»»}
+\psplot[linecolor=red]{-10}{10}{««str(solve(system[1],y)[0])»»}
+\pscircle*[linecolor=black,fillcolor=black](««solx»»,««soly»»){0.2}
+\rput[««(solx<0) and "r" or "l"»»««(solx<0) and "t" or "b"»»](««solx»»,««soly»»){$\left(««Rational(rd[0],rd[1])»»,\,««Rational(rd[2],rd[3])»»\right)$}
+\end{psgraph}
+\end{center}
+
+$$=««{x: Rational(rd[0],rd[1]), y: Rational(rd[2],rd[3])}»»$$
+\end{sol}
+
+
+
+
+
+% Sistema de ecuaciones con coeficientes fraccionarios.
+\problema
+Encuentra la solución del siguiente sistema:
+
+««
+rd = list(range(1,10))
+shuffle(rd)
+solx = rd[0]/rd[1]
+soly = rd[2]/rd[3]
+system = sol2lin([solx, soly], layer=100, linears=2, equation=False)
+»»
+
+$$\left\{ \begin{aligned}
+««Rational(system[0][0],rd[4])*x + Rational(system[0][1],rd[4])*y»»&=««Rational(-system[0][2],rd[4])»»\\
+««Rational(system[1][0],rd[5])*x + Rational(system[1][1],rd[5])*y»»&=««Rational(-system[1][2],rd[5])»»
+\end{aligned}\right.$$
+
+
+\begin{sol}
+\begin{center}
+\psset{Dx=2,Dy=2,xsubticks=2,ysubticks=2,
+xAxisLabel=x,yAxisLabel=\textcolor{blue}{$««Rational(system[0][0],rd[4])*x + Rational(system[0][1],rd[4])*y»»=««Rational(-system[0][2],rd[4])»»$} \textcolor{red}{$\qquad ««Rational(system[1][0],rd[5])*x + Rational(system[1][1],rd[5])*y»»=««Rational(-system[1][2],rd[5])»»$},
+yMaxValue=10,algebraic=true,plotpoints=1000}
+\begin{psgraph}(0,0)(-10,-10)(10,10){7cm}{7cm} % Corchete escala trigonométrica
+\psplot[linecolor=blue]{-10}{10}{««str(-(system[0][0]*x+system[0][2])/system[0][1])»»}
+\psplot[linecolor=red]{-10}{10}{««str(-(system[1][0]*x+system[1][2])/system[1][1])»»}
+\pscircle*[linecolor=black,fillcolor=black](««solx»»,««soly»»){0.2}
+\rput[««(solx<0) and "r" or "l"»»««(solx<0) and "t" or "b"»»](««solx»»,««soly»»){$\left(««Rational(rd[0],rd[1])»»,\,««Rational(rd[2],rd[3])»»\right)$}
+\end{psgraph}
+\end{center}
+
+$$=««{x: Rational(rd[0],rd[1]), y: Rational(rd[2],rd[3])}»»$$
+\end{sol}
+
+
+
+
+
+
+
+
+
+
+% Sistema de ecuaciones con coeficientes enteros.
+\problema
+Encuentra la solución del siguiente sistema:
+
+««
+rd = list(range(1,10))
+shuffle(rd)
+solx = rd[0]/rd[1]
+soly = rd[2]/rd[3]
+system = sol2lin([solx, soly], layer=100, linears=2)
+»»
+
+$$\left\{ \begin{split}
+««system[0]»»\\
+««system[1]»»\end{split}\right.$$
+
+
+\begin{sol}
+\begin{center}
+\psset{Dx=2,Dy=2,xsubticks=2,ysubticks=2,
+xAxisLabel=x,yAxisLabel=\textcolor{blue}{$««system[0]»»$} \textcolor{red}{$\qquad ««system[1]»»$},
+yMaxValue=10,algebraic=true,plotpoints=1000}
+\begin{psgraph}(0,0)(-10,-10)(10,10){7cm}{7cm} % Corchete escala trigonométrica
+\psplot[linecolor=blue]{-10}{10}{««str(solve(system[0],y)[0])»»}
+\psplot[linecolor=red]{-10}{10}{««str(solve(system[1],y)[0])»»}
+\pscircle*[linecolor=black,fillcolor=black](««solx»»,««soly»»){0.2}
+\rput[««(solx<0) and "r" or "l"»»««(solx<0) and "t" or "b"»»](««solx»»,««soly»»){$\left(««Rational(rd[0],rd[1])»»,\,««Rational(rd[2],rd[3])»»\right)$}
+\end{psgraph}
+\end{center}
+
+$$=««{x: Rational(rd[0],rd[1]), y: Rational(rd[2],rd[3])}»»$$
+\end{sol}
+
+
+
+
+
+% Sistema de ecuaciones con coeficientes fraccionarios.
+\problema
+Encuentra la solución del siguiente sistema:
+
+««
+rd = list(range(1,10))
+shuffle(rd)
+solx = rd[0]/rd[1]
+soly = rd[2]/rd[3]
+system = sol2lin([solx, soly], layer=100, linears=2, equation=False)
+»»
+
+$$\left\{ \begin{aligned}
+««Rational(system[0][0],rd[4])*x + Rational(system[0][1],rd[4])*y»»&=««Rational(-system[0][2],rd[4])»»\\
+««Rational(system[1][0],rd[5])*x + Rational(system[1][1],rd[5])*y»»&=««Rational(-system[1][2],rd[5])»»
+\end{aligned}\right.$$
+
+
+\begin{sol}
+\begin{center}
+\psset{Dx=2,Dy=2,xsubticks=2,ysubticks=2,
+xAxisLabel=x,yAxisLabel=\textcolor{blue}{$««Rational(system[0][0],rd[4])*x + Rational(system[0][1],rd[4])*y»»=««Rational(-system[0][2],rd[4])»»$} \textcolor{red}{$\qquad ««Rational(system[1][0],rd[5])*x + Rational(system[1][1],rd[5])*y»»=««Rational(-system[1][2],rd[5])»»$},
+yMaxValue=10,algebraic=true,plotpoints=1000}
+\begin{psgraph}(0,0)(-10,-10)(10,10){7cm}{7cm} % Corchete escala trigonométrica
+\psplot[linecolor=blue]{-10}{10}{««str(-(system[0][0]*x+system[0][2])/system[0][1])»»}
+\psplot[linecolor=red]{-10}{10}{««str(-(system[1][0]*x+system[1][2])/system[1][1])»»}
+\pscircle*[linecolor=black,fillcolor=black](««solx»»,««soly»»){0.2}
+\rput[««(solx<0) and "r" or "l"»»««(solx<0) and "t" or "b"»»](««solx»»,««soly»»){$\left(««Rational(rd[0],rd[1])»»,\,««Rational(rd[2],rd[3])»»\right)$}
+\end{psgraph}
+\end{center}
+
+$$=««{x: Rational(rd[0],rd[1]), y: Rational(rd[2],rd[3])}»»$$
+\end{sol}

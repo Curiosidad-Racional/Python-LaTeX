@@ -274,14 +274,14 @@ class LatexPrinter(Printer):
                         if not arg.base.is_number and not isinstance(arg.base, Unit):
                             tmp = str(arg.base)
                             deg -= arg.exp
-                            find = re.search("_[^0-9]*([0-9]*)", tmp)
+                            find = re.search("_[^0-9]*([0-9]+)", tmp)
                             if find != None:
                                 sub -= eval(find.group(1))
                             nam += tmp
                     elif not arg.is_number and not isinstance(arg, Unit):
                         tmp = str(arg)
                         deg -= 1
-                        find = re.search("_[^0-9]*([0-9]*)", tmp)
+                        find = re.search("_[^0-9]*([0-9]+)", tmp)
                         if find != None:
                             sub -= eval(find.group(1))
                         nam += tmp
@@ -290,14 +290,14 @@ class LatexPrinter(Printer):
                     if not x.base.is_number and not isinstance(x.base, Unit):
                         tmp = str(x.base)
                         deg -= x.exp
-                        find = re.search("_[^0-9]*([0-9]*)", tmp)
+                        find = re.search("_[^0-9]*([0-9]+)", tmp)
                         if find != None:
                             sub -= eval(find.group(1))
                         nam += tmp
                 elif not x.is_number and not isinstance(x, Unit):
                     tmp = str(x)
                     deg -= 1
-                    find = re.search("_[^0-9]*([0-9]*)", tmp)
+                    find = re.search("_[^0-9]*([0-9]+)", tmp)
                     if find != None:
                         sub -= eval(find.group(1))
                     nam += tmp
