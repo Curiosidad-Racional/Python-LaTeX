@@ -52,7 +52,7 @@ $ python3 /path/to/Python-Latex/python/pytex.py sample.ptx
 % Python-Sympy -> LaTeX success.
 ```
 
-Output
+Output file: `sample.ltx`
 
 ```
 [... Latex preamble ...]
