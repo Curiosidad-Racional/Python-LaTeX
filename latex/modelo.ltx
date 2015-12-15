@@ -1,0 +1,462 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% TeXLive 2012 sobre Linux
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[9pt,spanish]{article}
+%% o
+%\documentclass[9pt,spanish]{extarticle}
+%% Necesario 'etex' por los muchos paquetes que se cargan.
+\usepackage{etex}
+\usepackage[utf8]{inputenc}
+%% 'babel' debe preceder a 'ntheorem' por incompatibilidades con
+%% 'thref'. No hace falta la opción 'spanish' si esta aparece en
+%% \documentclass.
+\usepackage{babel}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,a4paper, headheight=5mm, footskip=7mm}
+\geometry{left=19mm, right=16mm, top=37mm, bottom=23mm}
+%% 'amsmath' debe preceder a 'ntheorem' porque este último sobrescribe
+%% definiciones del primero.
+\usepackage{amsmath}
+\usepackage{amssymb}
+%% 'mathabx' rompe las llaves de \underbrace y \overbrace.
+%% en general 'mathabx' da muchos problemas ya que es
+%% incompatible con 'amsmath' y el paquete 'fourier'.
+%\usepackage{mathabx}
+\usepackage{amsxtra}
+\usepackage[ampersand]{easylist}
+\usepackage{mathtools}
+\usepackage{latexsym}
+\usepackage{bbm}
+\usepackage{framed}
+%% Si cargamos 'amsthm' tendremos que cambiar \newtheorem{proof}
+%% por \renewtheorem{proof} por estar definido ya en 'amsthm'.
+%% Debemos incluir [..amsmath..] vamos a usar 'ntheorem' junto con el.
+\usepackage[thmmarks,amsmath,hyperref]{ntheorem}
+\usepackage{dsfont}
+\usepackage{ulem}
+\usepackage{environ}
+\usepackage{varwidth}
+\usepackage{extarrows}
+\usepackage{braket}
+\usepackage{units}
+\usepackage{cancel}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{enumerate}
+\usepackage{array}
+\usepackage{eurosym}
+\usepackage{titlesec}
+\usepackage[stable]{footmisc}
+%\usepackage{xspace}
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{chemfig}
+\usepackage{pstricks}
+\usepackage{pst-fractal}
+\usepackage{pst-circ}
+\usepackage{pst-coil}
+\usepackage{pst-plot}
+\usepackage{pst-solides3d}
+\usepackage{pst-eps}
+\usepackage{pstricks-add}
+\usepackage{animate}
+\usepackage{multido}
+\usepackage{grffile}
+\usepackage{wrapfig}
+\usepackage{ifthen}
+\usepackage{fancybox}
+%% Cargar 'empheq' despues de 'fancybox' y 'ntheorem',
+%% en el caso de 'fancybox' para que arregle
+%% incompatibilidades con \shadowbox.
+%% Arregla fallos de 'ntheorem' con el paquete 'thmmarks'
+%% por lo que es recomendable. La opción 'overload'
+%% fastidia todas las etiquetas.
+\usepackage[ntheorem]{empheq}
+\pagestyle{fancy}
+%% Último paquete 'hyperref'.
+%% debe cargarse antes del primer uso de \newtheorem o similares.
+\usepackage[bookmarks=true,bookmarksopen=true,bookmarksopenlevel=1]{hyperref}
+%% Aunque 'hyperref' debería ser el último paquete
+%% 'cleveref' modifica su comportamiento junto con
+%% el de otros como 'amsthm', 'ntheorem'...
+%% por lo que estará después de todos ellos.
+\usepackage{cleveref}
+
+%%%%%%%%%%%%%%%%%%%%%% Formato
+\fancyhead{}
+\rfoot{\thepage}
+\cfoot{}
+\lfoot{}
+\definecolor{partcolor}{rgb}{0,0,0.1}
+\definecolor{sectcolor}{rgb}{0,0,0.3}
+\definecolor{ssctcolor}{rgb}{0,0,0.5}
+\definecolor{ssstcolor}{rgb}{0,0,0.7}
+\renewcommand{\headrulewidth}{0pt}
+\titleformat{\part}[hang]{\huge\sc{\color{blue}\titlerule[1pt]\vspace{2pt}\titlerule[1pt]}}{\llap{\bf\color{blue}\thepart.}}{10pt}{\color{partcolor}}[{\color{blue}\titlerule[1pt]\vspace{2pt}\titlerule[1pt]}]
+\titleformat{\section}[hang]{\Large\sc}{\llap{\bf\color{blue}\thesection.}}{10pt}{\color{sectcolor}}[{\color{blue}\nobreak\titlerule[1pt]}]
+\titleformat{\subsection}[hang]{\large\bf}{\llap{\color{blue}\thesubsection.}}{7pt}{\color{ssctcolor}\underline}
+\titleformat{\subsubsection}[hang]{\normalsize\it}{\llap{\bf\color{blue}\thesubsubsection.}}{4pt}{\color{ssstcolor}}
+
+% PROPIEDADES DEL DOCUMENTO
+\parskip=3pt
+\parindent=15pt
+\renewcommand\arraystretch{2}
+\allowdisplaybreaks
+
+
+% FORMATO DE THEOREM
+\theoremstyle{marginbreak}
+\theoremheaderfont{\normalfont\bfseries}\theorembodyfont{\slshape}
+\theoremsymbol{\ensuremath{\diamondsuit}}
+\theoremseparator{:}
+%\theoremindent0cm
+%\theoremnumbering{greek}
+%\theoremprework{\bigskip\hrule}
+%\theorempostwork{\hrule\bigskip}
+\newtheorem{theorem}{Teorema}[subsection]
+\newtheorem{conjecture}{Conjetura}[subsection]
+
+\theoremstyle{marginbreak}
+\theoremsymbol{\ensuremath{\lozenge}}
+\theoremindent0.3cm
+%\theoremnumbering{greek}
+\newtheorem{lemma}[theorem]{Lema}
+
+\theoremstyle{marginbreak}
+\theoremsymbol{\ensuremath{\diamond}}
+\theoremindent0.5cm
+%\theoremnumbering{greek}
+\newtheorem{proposition}[theorem]{Proposición}
+
+\theoremstyle{marginbreak}
+\theoremsymbol{\ensuremath{\diamondsuit}}
+\theoremindent0cm
+%\theoremnumbering{arabic}
+\newtheorem{corollary}[theorem]{Corolario}
+
+\theoremstyle{margin}
+\theoremsymbol{\ensuremath{\triangle}}
+\theoremseparator{.}
+%\theoremprework{\bigskip\hrule}
+%\theorempostwork{\hrule\bigskip}
+\newtheorem{definition}[theorem]{Definición}
+
+\theoremheaderfont{\sc}\theorembodyfont{\upshape}
+\theoremstyle{nonumberbreak}
+\theoremseparator{}
+\theoremsymbol{\rule{1ex}{1ex}}
+\newtheorem{proof}{Demostración}
+
+
+% FORMATO DE APARTADOS
+\newcounter{miproblema}
+\newcounter{miapartado}
+\newboolean{soluciones}
+\newboolean{aeps}
+
+\setcounter{miproblema}{0}
+\setcounter{miapartado}{0}
+\setboolean{soluciones}{true}
+\setboolean{aeps}{false}
+
+\newcommand{\sinsoluciones}{\setboolean{soluciones}{false}}
+\newcommand{\consoluciones}{\setboolean{soluciones}{true}}
+\newcommand{\paraeps}{\setboolean{aeps}{true}}
+
+\newcommand{\reiniproblema}{\setcounter{miproblema}{0}}
+\newcommand{\reiniapartado}{\setcounter{miapartado}{0}}
+
+\newcommand{\problema}{\addtocounter{miproblema}{1}
+\medskip
+\pdfbookmark[1]{Problema \arabic{miproblema}}{problema\arabic{miproblema}}
+\ifthenelse{ \boolean{soluciones} }{ \noindent\rule{\linewidth}{5pt} }{}
+\noindent
+{\it \large \arabic{miproblema}}.
+\setcounter{miapartado}{0}
+}
+
+\newenvironment{probl}[1][.5]{
+\addtocounter{miproblema}{1}
+\ifthenelse{ \boolean{aeps} }{ \clearpage\thispagestyle{empty}\begin{TeXtoEPS}\begin{varwidth}{#1\linewidth}\parskip=3pt }{ \medskip
+\pdfbookmark[1]{Problema \arabic{miproblema}}{problema\arabic{miproblema}}
+\ifthenelse{ \boolean{soluciones} }{ \noindent\rule{\linewidth}{5pt} }{}  }
+\noindent
+{\it \large \arabic{miproblema}}.
+\setcounter{miapartado}{0}
+}{
+\ifthenelse{ \boolean{aeps} }{ \end{varwidth}\end{TeXtoEPS} }{}
+}
+
+\newenvironment{probl*}[1][.5]{
+\ifthenelse{ \boolean{aeps} }{ \clearpage\thispagestyle{empty}\begin{TeXtoEPS}\begin{varwidth}{#1\linewidth}\parskip=3pt }{ \medskip
+\ifthenelse{ \boolean{soluciones} }{ \noindent\rule{\linewidth}{5pt} }{}  }
+\noindent
+\setcounter{miapartado}{0}
+}{
+\ifthenelse{ \boolean{aeps} }{ \end{varwidth}\end{TeXtoEPS} }{}
+}
+
+\newcommand{\apartado}{\addtocounter{miapartado}{1}
+\smallskip
+\pdfbookmark[2]{Apartado \alph{miapartado}}{problema\arabic{miproblema}apartado\alph{miapartado}}
+\quad {\it \alph{miapartado}}.
+}
+
+\newenvironment{apartadocols}{
+\ifthenelse{\boolean{soluciones}}{}{\columnseprule=2pt\begin{multicols}{2}\leftskip=\parindent \parindent=0pt}
+}{
+\ifthenelse{\boolean{soluciones}}{}{\end{multicols}}
+}
+
+%\newsavebox\boxtextooculto
+\newboolean{textoocultoenmarcado}
+\setboolean{textoocultoenmarcado}{true}
+\newcommand{\solucionessinmarco}{\setboolean{textoocultoenmarcado}{false}}
+\newcommand{\solucionesconmarco}{\setboolean{textoocultoenmarcado}{true}}
+%\newenvironment{textooculto}
+%{\setbox\boxtextooculto\vbox\bgroup}
+%{\egroup\ifthenelse{\boolean{soluciones}}{\par\unvbox\boxtextooculto}{}}
+
+%\newenvironment{sol}{
+%\begin{textooculto}
+%\vspace{\parskip}
+%\ifthenelse{\boolean{textoocultoenmarcado}}{\noindent\rule[-6pt]{1pt}{7pt}\rule{\linewidth}{1pt}\rule[-6pt]{1pt}{7pt}}{}
+%
+%}{
+%
+%\ifthenelse{\boolean{textoocultoenmarcado}}{\noindent\rule{1pt}{7pt}\rule{\linewidth}{1pt}\rule{1pt}{7pt}}{}
+%\end{textooculto}
+%
+%}
+
+\NewEnviron{sol}{\ifthenelse{\boolean{soluciones}}{
+\vspace{\parskip}
+\ifthenelse{\boolean{textoocultoenmarcado}}{
+\ifthenelse{\boolean{aeps}}{\noindent\rule[-6.6pt]{.4pt}{7pt}\hrulefill\rule[-6.6pt]{.4pt}{7pt}}
+{\noindent\rule[-6pt]{1pt}{7pt}\rule{\linewidth}{1pt}\rule[-6pt]{1pt}{7pt}}}{}
+
+\BODY
+
+\ifthenelse{\boolean{textoocultoenmarcado}}{
+\ifthenelse{\boolean{aeps}}{\noindent\rule{.4pt}{7pt}\hrulefill\rule{.4pt}{7pt}}
+{\noindent\rule{1pt}{7pt}\rule{\linewidth}{1pt}\rule{1pt}{7pt}}}{}
+}{}}
+
+\newcommand{\solucion}[2][__hueco__]{\ifthenelse{\boolean{soluciones}}{#2}{\ifthenelse{\equal{#1}{__hueco__}}{\phantom{#2}}{#1}}}
+\newcommand{\Osolbox}[2]{\noindent\Ovalbox{\parbox{\linewidth}{\ifthenelse{\boolean{soluciones}}{#2}{#1}\hfill}}}
+
+%\newcommand{\myweb}{http://curiosidad-racional.blogspot.com}
+\newcommand{\myweb}{http://curiosidad-racional.tk}
+
+% PRESENTACION
+\newcommand{\presentacion}[4][c]{
+\hypersetup{pdfauthor={H\'ector Enr\'iquez},pdftitle={#3}}
+\begin{titlepage}
+\thispagestyle{empty}
+{\vspace*{0pt plus 1fill}\begin{center} \large #2 \end{center}}
+{\vspace{1cm}\begin{center} \scshape \huge #3 \end{center}}
+{\vspace{1cm}\begin{center}
+\href{\myweb}{\myweb}
+\end{center}}
+{\vspace{0pt plus 4fill}\begin{flushright} \footnotesize \underline{\hspace*{5cm}}\\
+#4 \end{flushright}}
+\end{titlepage}
+\ifthenelse{\equal{#1}{c}}{
+\lhead{#2}
+\chead{\scshape #3}
+\rhead{#4}
+\lfoot{\href{\myweb}{\myweb}}
+} % Cabecera completa [c]
+{
+\ifthenelse{\equal{#1}{t}}{
+\chead{\scshape #3}
+} % Solo titulo [t]
+{} % Vacia []
+}
+}
+
+\newcommand{\curiosidadracional}{
+\hypersetup{pdfauthor={H\'ector Enr\'iquez}}
+\lfoot{\href{\myweb}{\myweb}}
+}
+
+
+\newboolean{nombrealumno}
+\setboolean{nombrealumno}{false}
+\newcommand{\nombrealumno}{}
+\newcommand{\examen}[4][Escudo.eps]{
+\thispagestyle{empty}
+\renewcommand{\arraystretch}{2.2}
+\begin{tabular}{|c|p{8cm}|p{4.5cm}|}
+\hline
+\multirow{3}{2.5cm}{\centering\includegraphics[width=73pt,height=80pt]{#1}} & 
+ \multicolumn{2}{c|}{ #2 } \tabularnewline
+ &  \multicolumn{2}{c|}{ #3 } \tabularnewline
+\cline{2-3}
+ & \multicolumn{2}{l|}{Alumno:} \tabularnewline
+\hline
+Curso #4 & Fecha: & Calificación: \\
+\hline
+\end{tabular}
+\renewcommand{\arraystretch}{2}
+}
+
+
+% CONFIGURACIÓN MATEMÁTICAS
+
+\setcounter{MaxMatrixCols}{100}
+%%% Tamaños de texto en fórmulas \DeclareMathSizes{ds}{ts}{ss}{sss}
+%%% Al principio de toda ecuación \everymath{...} ejemplo \everymath{\displaystyle}
+
+% CONFIGURACIÓN COLOR
+
+\definecolor{ashgrey}{rgb}{0.7, 0.75, 0.71}
+\definecolor{earthyellow}{rgb}{0.88, 0.66, 0.37}
+\definecolor{ferrarired}{rgb}{1.0, 0.11, 0.0}
+\definecolor{indigo}{rgb}{0.0, 0.25, 0.42}
+\definecolor{palatinateblue}{rgb}{0.15, 0.23, 0.89}
+\definecolor{electricblue}{rgb}{0.49, 0.98, 1.0}
+\definecolor{blue(pigment)}{rgb}{0.2, 0.2, 0.6}
+\definecolor{green(pigment)}{rgb}{0.0, 0.65, 0.31}
+\definecolor{red(pigment)}{rgb}{0.93, 0.11, 0.14}
+\definecolor{burgundy}{rgb}{0.5, 0.0, 0.13}
+\definecolor{melon}{rgb}{0.99, 0.74, 0.71}
+\definecolor{peach}{rgb}{1.0, 0.9, 0.71}
+\definecolor{apricot}{rgb}{0.98, 0.81, 0.69}
+\definecolor{aqua}{rgb}{0.0, 1.0, 1.0}
+\definecolor{aquamarine}{rgb}{0.5, 1.0, 0.83}
+\definecolor{orangered}{rgb}{1.0, 0.27, 0.0}
+\definecolor{persianrose}{rgb}{1.0, 0.16, 0.64}
+\definecolor{persianred}{rgb}{0.8, 0.2, 0.2}
+\definecolor{radicalred}{rgb}{1.0, 0.21, 0.37}
+\definecolor{uared}{rgb}{0.85, 0.0, 0.3}
+\definecolor{fluorescentyellow}{rgb}{0.8, 1.0, 0.0}
+\definecolor{cadetblue}{rgb}{0.37, 0.62, 0.63}
+\definecolor{burlywood}{rgb}{0.87, 0.72, 0.53}
+\definecolor{columbiablue}{rgb}{0.61, 0.87, 1.0}
+
+% MACROS
+
+\newcommand{\I}{\mathbbm{i}}
+\newcommand{\Dx}{\Delta x}
+\newcommand{\Dy}{\Delta y}
+\newcommand{\Dz}{\Delta z}
+\newcommand{\entonces}{\quad\Rightarrow\quad}
+\newcommand{\barrainv}{$\backslash$}
+\newcommand{\ufrac}[3][.6ex]{\left.\raisebox{#1}{$#2$}\negmedspace{\bigm/}\negmedspace\raisebox{-#1}{$#3$}\right.}
+\newcommand{\ifrac}[3][.6ex]{\left.\raisebox{#1}{$#2$}\negmedspace\middle/\negmedspace\raisebox{-#1}{$#3$}\right.}
+%\newcommand{\ifrac}[2]{\nicefrac{\displaystyle #1}{\displaystyle #2}}
+\newcommand{\adfrac}[2]{\mathchoice{\frac{#1}{#2}}{\nicefrac{#1}{#2}} {\frac{#1}{#2}}{\nicefrac{#1}{#2}}}
+
+
+
+%\newcommand{\norm}[1]{\left| #1 \right|}
+%\newcommand{\nnorm}[1]{\left\| #1 \right\|}
+%\newcommand{\nnnorm}[1]{\left\vvvert #1 \right\vvvert}
+%\newcommand{\llaves}[1]{\left\{ #1 \right\}}
+%\newcommand{\parent}[1]{\left( #1 \right)}
+%\newcommand{\corchetes}[1]{\left[ #1 \right]}
+%% 'DeclarePairedDelimiter' tiene funcionalidades interesantes.
+%% \ceil*{x} añade \left y \right para adecuarse al tamaño,
+%% \ceil[\Big]{x} usa el tamaño 'Big', etc.
+\DeclarePairedDelimiter{\norm}{|}{|}
+\DeclarePairedDelimiter{\nnorm}{\|}{\|}
+\DeclarePairedDelimiter{\nnnorm}{\vvvert}{\vvvert}
+\DeclarePairedDelimiter{\llaves}{\{}{\}}
+\DeclarePairedDelimiter{\parentesis}{(}{)}
+\DeclarePairedDelimiter{\corchetes}{[}{]}
+
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+
+\newcommand\ul{\bgroup\markoverwith
+{\rule[-0.5ex]{2pt}{0.4pt}}\ULon}
+
+\newcommand\ru{\bgroup\markoverwith
+{\textcolor{red}{\rule[-0.5ex]{2pt}{0.4pt}}}\ULon}
+
+\newcommand\rs{\bgroup\markoverwith
+{\textcolor{red}{\rule[0.5ex]{2pt}{0.4pt}}}\ULon}
+
+
+
+\newdimen\errorsize \errorsize=0.2pt
+% Frame with a label at top
+\newcommand\LabFrame[2]{%
+    \fboxrule=\FrameRule
+    \fboxsep=-\errorsize
+    \textcolor{FrameColor}{%
+    \fbox{%
+      \vbox{\nobreak
+      \advance\FrameSep\errorsize
+      \begingroup
+        \advance\baselineskip\FrameSep
+        \hrule height \baselineskip
+        \nobreak
+        \vskip-\baselineskip
+      \endgroup
+      \vskip 0.5\FrameSep
+      \hbox{\hskip\FrameSep \strut
+        \textcolor{TitleColor}{\textbf{#1}}}%
+      \nobreak \nointerlineskip
+      \vskip 1.3\FrameSep
+      \hbox{\hskip\FrameSep
+        {\normalcolor#2}%
+        \hskip\FrameSep}%
+      \vskip\FrameSep
+    }}%
+}}
+\definecolor{FrameColor}{rgb}{0.25,0.25,1.0}
+\definecolor{TitleColor}{rgb}{1.0,1.0,1.0}
+
+\newenvironment{contlabelframe}[2][\Frame@Lab\ (cont.)]{% 
+  % Optional continuation label defaults to the first label plus
+  \def\Frame@Lab{#2}%
+  \def\FrameCommand{\LabFrame{#2}}%
+  \def\FirstFrameCommand{\LabFrame{#2}}%
+  \def\MidFrameCommand{\LabFrame{#1}}%
+  \def\LastFrameCommand{\LabFrame{#1}}%
+  \MakeFramed{\advance\hsize-\width \FrameRestore} 
+}{\endMakeFramed} 
+\newcounter{cajatitulada}
+\newenvironment{cajatitulada}[1]{%
+  \par
+  \refstepcounter{cajatitulada}%
+  \begin{contlabelframe}{Definición \thecajatitulada:\quad #1}
+%  \begin{contlabelframe}{#1}
+ \noindent\ignorespaces}
+{\end{contlabelframe}} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%%   Documentación de Errores de Uso
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%% 'split'
+%% Dentro de los entornos matemáticos 'split' no debe abarcar todo el
+%% contenido pues se entiende que entonces el entorno matemático
+%% debería ser 'align' u otras opciones. Si aun así se quiere usar
+%% 'split' para que funcione deberemos ponerlo entre llaves.
+%%
+%% Ejs.
+%%
+%% \[ {\begin{split}
+%%   parte_1 \\
+%%   parte_2
+%% \end{split}} \]
+%%
+%% \begin{equation}
+%%   {\begin{split}
+%%     parte_1 \\
+%%     parte_2
+%%   \end{split}}
+%% \end{equation}

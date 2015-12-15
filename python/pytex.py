@@ -1,48 +1,53 @@
 # -*- coding: utf-8 -*-
-# Cabecera.
-#from __future__ import division # Obsoleto
-####  SYMPY  ####
-# Base
-#from sympy import *
-# Funciones
+# from __future__ import division # Deprecated
+###############
+##           ##
+##   SYMPY   ##
+##           ##
+###############
+# Functions
 from sympy import exp, ln, log, sin, cos, tan, asin, acos, atan, sinh, cosh, tanh, asinh, acosh, atanh, sqrt, root, erf, gamma, Function, FunctionClass
 from sympy.core.function import ArgumentIndexError
-# Estadística
+# Statistics
 from sympy import factorial, binomial
-# Variables
+# Symbols
 from sympy import var, symbols, Symbol, Dummy
-# Tipos de Numeros
+# Numbers
 from sympy import N, Integer, Float, Rational, Number, Poly
+from sympy.core.numbers import Zero, One, NegativeOne, Half
 # Matrices
 from sympy import Matrix, trace, transpose, det
-# Complejos
+# Complex Numbers
 from sympy import conjugate
-# Constantes
+# Constants
 from sympy import I, nan, pi, oo, zoo
 from sympy import E as e
-# Numeros
-from sympy.core.numbers import Zero, One, NegativeOne, Half
-# Operaciones sobre enteros
+# Functions involving integers
 from sympy import factorint, primefactors, gcd, lcm
-# Operaciones sobre decimales
+# Functions involving decimals
 from sympy import floor, ceiling, sign, Mod, Max, Min, Abs
-# Ecuaciones
+# Equations
 from sympy import solve, Eq, Equality
-# Expresiones
+# Expressions
 from sympy import collect, srepr, sympify, expand, factor
-# Simplificación
-from sympy import simplify, radsimp, ratsimp, trigsimp, powsimp, combsimp, nsimplify, cancel, refine, Q
-# Operaciones
+# Simplification
+from sympy import simplify, radsimp, ratsimp, trigsimp, powsimp, combsimp, nsimplify, cancel, refine, Q, S
+# Operations
 from sympy import Add, Mul, Pow, prod
-# Operadores
+# Operators
 from sympy import diff, integrate, limit, Derivative, Integral
-# Utilidades numéricas
+# Numeric tools
 from sympy.mpmath import polar
 from sympy.polys.specialpolys import interpolating_poly
-####         ####
+# Physics units
+import sympy.physics.units as un
+#######################
+##                   ##
+##   Other modules   ##
+##                   ##
+#######################
 from latex import LatexPrinter, translate, latex
 from random import randrange, randint, uniform, shuffle, choice, seed
-import sympy.physics.units as un
 import sys, copy, inspect
 from os import devnull
 FNULL = open(devnull, 'w')
@@ -51,32 +56,25 @@ import re as regexp
 import time as tm
 import numpy as np
 from scipy.integrate import ode
-#__time__ = time.time()
-#def tlap():
-#    global __time__
-#    tmp = time.time()
-#    ep("time lap: ", tmp - __time__ )
-#    __time__ = tmp
 
 
-
-
-#############################################################
-#############################################################
-#############################################################
-#               Definiciones iniciales.
-#############################################################
-#############################################################
-#############################################################
-digits = 5
-physics = False
+# Symbols
+#  ____                  _           _     
+# / ___| _   _ _ __ ___ | |__   ___ | |___ 
+# \___ \| | | | '_ ` _ \| '_ \ / _ \| / __|
+#  ___) | |_| | | | | | | |_) | (_) | \__ \
+# |____/ \__, |_| |_| |_|_.__/ \___/|_|___/
+#        |___/
+#
+__digits__ = 5
+__physics__ = False
 dt = symbols('dt')
-# Variables matemáticas.
+# Mathematical variables
 var('r:z')
 var('i:n', integer=True)
 var('f:g', cls=Function)
 var('alpha beta gamma delta epsilon phi iota kappa rho theta')
-# Variables físicas.
+# Physical variables
 var('t:10 x:10 y:10 z:10')
 var('v_x v_y v_z')
 var('v_x:10 v_y:10 v_z:10')
@@ -87,13 +85,13 @@ var('v_phi v_rho v_theta v_mu v_xi v_upsilon')
 var('v_phi:10 v_rho:10 v_theta:10 v_mu:10 v_xi:10 v_upsilon:10')
 var('a_phi a_rho a_theta a_mu a_xi a_upsilon')
 var('a_phi:10 a_rho:10 a_theta:10 a_mu:10 a_xi:10 a_upsilon:10')
-# Variables electrónica.
+# Electronic variables
 var('U:10')
 var('i:10')
 var('R:10')
 var('C:10')
 var('q:10')
-# Ecuaciones físicas.
+# Physical equations
 ec = {
 'xru'   : Eq(x1 - x0 , v_x0*t),
 'yru'   : Eq(y1 - y0 , v_y0*t),
@@ -108,7 +106,23 @@ ec = {
 'ayra'  : Eq(v_y1**2 - v_y0**2 , Rational(2)*a_y*(y1 - y0)),
 'azra'  : Eq(v_z1**2 - v_z0**2 , Rational(2)*a_z*(z1 - z0))
 }
-# Unidades.
+__variable_names__ = {}
+def setvn(dicti = {}):
+    """
+    Assigns variable names.
+    """
+    global __variable_names__
+    if dicti == {}:
+        __variable_names__ = {}
+    else:
+        __variable_names__.update(dicti)
+# Units
+#  _   _       _ _       
+# | | | |_ __ (_) |_ ___ 
+# | | | | '_ \| | __/ __|
+# | |_| | | | | | |_\__ \
+#  \___/|_| |_|_|\__|___/
+#
 uN     = un.Unit("Newtons", r"N")
 ukg    = un.kg#Unit("Kilogramos", r"kg")
 um     = un.m#Unit("metros", r"m")
@@ -135,34 +149,34 @@ uT     = un.Unit("Teslas", r"T")
 uH     = un.Unit("Henrios", r"H")
 uPa    = un.Unit("Pascales", r"Pa")
 #
-# Simplificación de expresiones con unidades.
+# Simplifying expressions with units
 #
 units_format = [
-{# A unidades primarias. Aunque están ordenadas no importa el orden.
-# por eso aparecen en el mismo directorio.
-# Circuitos.
+{
+# Primary units. Although they are ordered not matter what order.
+# therefore they appear in the same directory.
+# Circuits
 uF            : un.F,
 uOhm          : un.ohm,
 uV            : un.V,
 uH            : un.H,
 uT            : un.T,
 uC            : un.C,
-#uA            : un.A, # primaria
-# Dinámica.
+#uA            : un.A, # primary
+# Dynamics
 uW            : un.W,
 uJ            : un.J,
 uN            : un.N,
 uPa           : un.Pa,
 uHz           : un.s**-1#,
-#ukg           : un.kg, # primaria
-#um            : un.m, # primaria
-#us            : un.s, # primaria
-# Termodinámica
-#umol          : un.mol, # primaria
-#uK            : un.K # primaria
+#ukg           : un.kg, # primary
+#um            : un.m, # primary
+#us            : un.s, # primary
+# Thermodynamics
+#umol          : un.mol, # primary
+#uK            : un.K # primary
 },
-# A unidades derivadas. Orden imprescindible, por lo que se definen
-# varios directorios.
+# Derived units. Essential order, so several directories are defined.
 {
 un.F            : uF
 },
@@ -196,213 +210,47 @@ un.kg/un.s**2   : un.Unit("Newtons/metro", r"\ufrac{N}{m}")
 },
 {
 un.C            : uC
-}#,
-#{# Formateo de unidades.
-#un.N/un.m         : un.Unit("Newtons/metro", r"N/m"),
-#un.m**2/un.s**2   : un.Unit("metros^2/segundo^2", r"m^2/s^2"),
-#un.m/un.s**2      : un.Unit("metros/segundo^2", r"m/s^2"),
-#un.m/un.s         : un.Unit("metros/segundo", r"m/s"),
-#ukm**2/uh**2  : un.Unit("kilometros^2/hora^2", r"km^2/h^2"),
-#ukm/uh**2     : un.Unit("kilometros/hora^2", r"km/h^2"),
-#ukm/uh        : un.Unit("kilometros/hora", r"km/h"),
-#uo**2/un.s**2   : un.Unit("grados^2/segundo^2", r"^\circ^2/s^2"),
-#uo/un.s**2      : un.Unit("grados/segundo^2", r"^\circ/s^2"),
-#uo/un.s         : un.Unit("grados/segundo", r"^\circ/s"),
-#urad**2/un.s**2 : un.Unit("radianes^2/segundo^2", r"rad^2/s^2"),
-#urad/un.s**2    : un.Unit("radianes/segundo^2", r"rad/s^2"),
-#urad/un.s       : un.Unit("radianes/segundo", r"rad/s")
-#},
-#{# Últimas unidades cuando todo ya está formateado.
-## Cambios con segundos antes de este punto.
-#un.s**-1        : uHz,
-## Cambios con varias unidades antes de este punto.
-#un.F**-1        : un.Unit("1/Faraday", r"\frac1F"),
-#un.m**-1        : un.Unit("1/metros", r"\frac1m")
-#},
-#{# A unidades primarias.
-#un.A            : uA, # primaria
-## Dinámica.
-#un.kg           : ukg, # primaria
-#un.m            : um, # primaria
-#un.s            : us, # primaria
-## Termodinámica
-#un.mol          : umol, # primaria
-#un.K            : uK # primaria
-#}
+}
 ]
+# Unit conversion
+#  _   _       _ _                                       _             
+# | | | |_ __ (_) |_    ___ ___  _ ____   _____ _ __ ___(_) ___  _ __  
+# | | | | '_ \| | __|  / __/ _ \| '_ \ \ / / _ \ '__/ __| |/ _ \| '_ \ 
+# | |_| | | | | | |_  | (_| (_) | | | \ V /  __/ |  \__ \ | (_) | | | |
+#  \___/|_| |_|_|\__|  \___\___/|_| |_|\_/ \___|_|  |___/_|\___/|_| |_|
 #
-# Fin simplificación de unidades.
-#
-# Conversión de unidades.
+
+# International System
 cSI = {
 ukm        : 1000*um,
 uh         : 3600*us,
 urpm       : pi/30*urad/us,
 uo         : pi/180*urad
 }
+# Another System
 cNSI = {
 um         : ukm/1000,
 us         : uh/3600,
 urad/us    : 30/pi*urpm,
 urad       : 180/pi*uo
 }
-#############################################################
-#############################################################
-#############################################################
-#                      CONSTANTES
-#############################################################
-#############################################################
-#############################################################
-co = {
-########################### UNIVERSALES
-'c'      : 2.99792458e8*um/us,
-'h'      : 6.62e-34*uJ*us,
-########################### TERMODINAMICAS
-'Na'     : 6.022e23,
-'R'      : 8.314*uJ/umol/uK,
-'cvO2'   : 648.*uJ/ukg/uK,
-'cpO2'   : 911.2*uJ/ukg/uK,
-########################### ELECTROMAGNETICAS
-'Ke'     : 9.e9*uN*um**2/uC**2,
-'Km'     : 1.e-7*uT*um/uA,
-'mu0'    : pi*4.e-7*uT*um/uA,
-'ep0'    : 8.85e-12*uF/um,
-########################### PARTICULAS ELEMENTALES
-'me'     : 9.1e-31*ukg,
-'e'      : 1.6E-19*uC,
-########################### NUCLEARES
-'Ry'     : 1.097e7/um,
-########################### ASTRONOMICAS
-'G'      : 6.67e-11*uN*um**2/ukg**2,
-'g'      : 9.81*um/us**2,
-'MT'     : 5.98e24*ukg,
-'RT'     : 6.37e6*um,
-'MS'     : 1.99e30*ukg,
-'RS'     : 6.96e8*um,
-########################### MATERIALES
-'dH2O'   : 1000.*ukg/um**3,
-'dHg'    : 13600.*ukg/um**3,
-}
-#############################################################
-#############################################################
-#############################################################
-#           Orden de impresión de las variables.
-#############################################################
-#############################################################
-#############################################################
-#var('__:1:10:10')
-#dir_physics_order = {
-#__001: 'x_4',
-#__002: 'x_3',
-#__003: 'x_2',
-#__004: 'x_1',
-#__005: 'x_0',
-#__006: 'y_4',
-#__007: 'y_3',
-#__008: 'y_2',
-#__009: 'y_1',
-#__010: 'y_0',
-#__011: 'z_4',
-#__012: 'z_3',
-#__013: 'z_2',
-#__014: 'z_1',
-#__015: 'z_0',
-#__018: 'v_x',
-#__019: 'v_y',
-#__020: 'v_z',
-#__021: 'v_{x4}',
-#__022: 'v_{x3}',
-#__023: 'v_{x2}',
-#__024: 'v_{x1}',
-#__025: 'v_{x0}',
-#__026: 'v_{y4}',
-#__027: 'v_{y3}',
-#__028: 'v_{y2}',
-#__029: 'v_{y1}',
-#__030: 'v_{y0}',
-#__031: 'v_{z4}',
-#__032: 'v_{z3}',
-#__033: 'v_{z2}',
-#__034: 'v_{z1}',
-#__035: 'v_{z0}',
-#__050: 't_4',
-#__051: 't_3',
-#__052: 't_2',
-#__053: 't_1',
-#__054: 't_0'
-#}
-#dir_physics_order_bk = dict(dir_physics_order)
-#inv_physics_order = {
-#x4   : __001,
-#x3   : __002,
-#x2   : __003,
-#x1   : __004,
-#x0   : __005,
-#y4   : __006,
-#y3   : __007,
-#y2   : __008,
-#y1   : __009,
-#y0   : __010,
-#z4   : __011,
-#z3   : __012,
-#z2   : __013,
-#z1   : __014,
-#z0   : __015,
-#v_x  : __018,
-#v_y  : __019,
-#v_z  : __020,
-#v_x4 : __021,
-#v_x3 : __022,
-#v_x2 : __023,
-#v_x1 : __024,
-#v_x0 : __025,
-#v_y4 : __026,
-#v_y3 : __027,
-#v_y2 : __028,
-#v_y1 : __029,
-#v_y0 : __030,
-#v_z4 : __031,
-#v_z3 : __032,
-#v_z2 : __033,
-#v_z1 : __034,
-#v_z0 : __035,
-#t4   : __050,
-#t3   : __051,
-#t2   : __052,
-#t1   : __053,
-#t0   : __054
-#}
-#inv_physics_order_bk = dict(inv_physics_order)
-#############################################################
-#############################################################
-#############################################################
-#               Funciones para Unidades y variables
-#############################################################
-#############################################################
-#############################################################
-#def setvn(dicti = {}):
-#    global dir_physics_order, dir_physics_order_bk
-#    global inv_physics_order, inv_physics_order_bk
-#    if dicti == {}:
-#        dir_physics_order = dir_physics_order_bk
-#        inv_physics_order = inv_physics_order_bk
-#    else:
-#        for k, v in dicti.items():
-#            if k in inv_physics_order.keys():
-#                dir_physics_order[inv_physics_order[k]] = v
-#            else:
-#                if isinstance(v, str):
-#                    dir_physics_order.update({k: v})
-#                else:
-#                    inv_physics_order.update({k: v})
-__variable_names__ = {}
-def setvn(dicti = {}):
-    global __variable_names__
-    if dicti == {}:
-        __variable_names__ = {}
-    else:
-        __variable_names__.update(dicti)
+# Functions involving units
+#  _____                 _   _                 
+# |  ___|   _ _ __   ___| |_(_) ___  _ __  ___ 
+# | |_ | | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+# |  _|| |_| | | | | (__| |_| | (_) | | | \__ \
+# |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+#  _                 _       _                           _ _       
+# (_)_ ____   _____ | |_   _(_)_ __   __ _    _   _ _ __ (_) |_ ___ 
+# | | '_ \ \ / / _ \| \ \ / / | '_ \ / _` |  | | | | '_ \| | __/ __|
+# | | | | \ V / (_) | |\ V /| | | | | (_| |  | |_| | | | | | |_\__ \
+# |_|_| |_|\_/ \___/|_| \_/ |_|_| |_|\__, |   \__,_|_| |_|_|\__|___/
+#                                    |___/
+#
 def erase_units(expr):
+    """
+    Remove units from expression.
+    """
     if isinstance(expr, list):
         return [ erase_units(i) for i in expr ]
     elif isinstance(expr, tuple):
@@ -420,21 +268,22 @@ def erase_units(expr):
             result *= erase_units(arg)
         return result
     elif isinstance(expr, Pow):
-        #sys.stderr.write("pow"+str([expr.base, type(expr.base)]))
         return erase_units(expr.base)**expr.exp
     elif isinstance(expr, Equality):
         return Eq(erase_units(expr.lhs), erase_units(expr.rhs))
     elif isinstance(expr, Matrix):
         return Matrix([ [ erase_units(expr[i,j]) for j in range(expr.cols) ] for i in range(expr.rows) ])
     elif isinstance(expr, un.Unit):
-        #sys.stderr.write("unit"+str([expr, type(expr)])+"\n")
         return 1
-    # Comienzo de funciones.
+    # Remove units inside functions
     elif isinstance(expr, Function):
         return type(expr)(*( erase_units(i) for i in expr.args ))
     else:
         return expr
 def freeze_units(expr):
+    """
+    Convert products and divisions of units in a block
+    """
     if isinstance(expr, list):
         return [ freeze_units(i) for i in expr ]
     elif isinstance(expr, tuple):
@@ -475,18 +324,62 @@ def freeze_units(expr):
         return Eq(freeze_units(expr.lhs), freeze_units(expr.rhs))
     elif isinstance(expr, Matrix):
         return Matrix([ [ freeze_units(expr[i,j]) for j in range(expr.cols) ] for i in range(expr.rows) ])
-    # Comienzo de funciones.
+    # Freeze inside functions
     elif isinstance(expr, Function):
         return type(expr)(*( freeze_units(i) for i in expr.args ))
     else:
         return expr
-#############################################################
-#############################################################
-#############################################################
-#        Funciones para Física.
-#############################################################
-#############################################################
-#############################################################
+# Physical constants
+#  ____  _               _           _ 
+# |  _ \| |__  _   _ ___(_) ___ __ _| |
+# | |_) | '_ \| | | / __| |/ __/ _` | |
+# |  __/| | | | |_| \__ \ | (_| (_| | |
+# |_|   |_| |_|\__, |___/_|\___\__,_|_|
+#              |___/                   
+#                      _              _       
+#   ___ ___  _ __  ___| |_ __ _ _ __ | |_ ___ 
+#  / __/ _ \| '_ \/ __| __/ _` | '_ \| __/ __|
+# | (_| (_) | | | \__ \ || (_| | | | | |_\__ \
+#  \___\___/|_| |_|___/\__\__,_|_| |_|\__|___/
+#
+co = {
+########################### UNIVERSAL
+'c'      : 2.99792458e8*um/us,
+'h'      : 6.62e-34*uJ*us,
+########################### THERMODYNAMIC
+'Na'     : 6.022e23,
+'R'      : 8.314*uJ/umol/uK,
+'cvO2'   : 648.*uJ/ukg/uK,
+'cpO2'   : 911.2*uJ/ukg/uK,
+########################### ELECTROMAGNETIC
+'Ke'     : 9.e9*uN*um**2/uC**2,
+'Km'     : 1.e-7*uT*um/uA,
+'mu0'    : pi*4.e-7*uT*um/uA,
+'ep0'    : 8.85e-12*uF/um,
+########################### PARTICLE
+'me'     : 9.1e-31*ukg,
+'e'      : 1.6E-19*uC,
+########################### NUCLEAR
+'Ry'     : 1.097e7/um,
+########################### ASTRONOMIC
+'G'      : 6.67e-11*uN*um**2/ukg**2,
+'g'      : 9.81*um/us**2,
+'MT'     : 5.98e24*ukg,
+'RT'     : 6.37e6*um,
+'MS'     : 1.99e30*ukg,
+'RS'     : 6.96e8*um,
+########################### MATERIAL
+'dH2O'   : 1000.*ukg/um**3,
+'dHg'    : 13600.*ukg/um**3,
+}
+# Linear Systems
+#  _     _                         ____            _                     
+# | |   (_)_ __   ___  __ _ _ __  / ___| _   _ ___| |_ ___ _ __ ___  ___ 
+# | |   | | '_ \ / _ \/ _` | '__| \___ \| | | / __| __/ _ \ '_ ` _ \/ __|
+# | |___| | | | |  __/ (_| | |     ___) | |_| \__ \ ||  __/ | | | | \__ \
+# |_____|_|_| |_|\___|\__,_|_|    |____/ \__, |___/\__\___|_| |_| |_|___/
+#                                        |___/
+#
 def factordet(Mat):
     """
     Extract common factors of the determinant of the matrix.
@@ -531,6 +424,105 @@ def solveswc(ecu_list, res_list):
     Den = Den.det_bareis()
     return {res_list[i]: cancel(num[i]/den)*Num[i].det_bareis()/Den for i in range(len(res_list))}
 
+def syst_subs(system, equations, *params):
+    """
+    Solve 'system' for variables in 'variables' using 'equations'
+    """
+    variables = []
+    arrange = False
+    for param in params:
+        if isinstance(param, bool):
+            arrange = param
+        else:
+            variables = param
+    variables = set(variables)
+    system_vars = []
+    for equation in system:
+        system_vars += list(equation.atoms(Symbol))
+    system_vars = set(system_vars)
+    equations_vars = []
+    for equation in equations:
+        equations_vars += list(equation.atoms(Symbol))
+    equations_vars = set(equations_vars)
+    # Solve for variables listed
+    substitution = solve(equations, (system_vars|equations_vars)-variables)
+    if arrange:
+        vars_to_zero = {variable: 0 for variable in system_vars}
+    result = []
+    for equation in system:
+        if isinstance(equation, Equality):
+            if arrange:
+                replaced = collect((equation.lhs - equation.rhs).subs(substitution).expand(), variables)
+                varless = replaced.subs(vars_to_zero)
+                result.append(Eq(replaced - varless, -varless))
+            else:
+                equation = equation.subs(substitution)
+                result.append(Eq(collect(equation.lhs.expand(), variables), collect(equation.rhs.expand(), variables)))
+        else:
+            replaced = collect(equation.subs(substitution).expand(), variables)
+            if arrange:
+                varless = replaced.subs(vars_to_zero)
+                result.append(Eq(replaced - varless, -varless))
+            else:
+                result.append(replaced)
+    return result
+def syst2matrix(system, variables=None):
+    """
+    Returns A, B matrices of the system A·X = B.
+
+    Examples
+    ========
+
+    >>> from sympy import *
+    >>> x, y, z = symbols('x y z')
+    >>> syst = [ 2*x + 3*y - 10, - 3*x + 5*y - 7 ]
+    >>> syst2matrix(syst)
+    ⎛⎡2   3⎤, ⎡10⎤⎞
+    ⎜⎢     ⎥  ⎢  ⎥⎟
+    ⎝⎣-3  5⎦  ⎣7 ⎦⎠
+
+    >>> syst = [ Eq(2*x + 3*y, 10), Eq(- 3*x + 5*y, 7) ]
+    >>> syst2matrix(syst)
+    ⎛⎡3  2 ⎤, ⎡10⎤⎞
+    ⎜⎢     ⎥  ⎢  ⎥⎟
+    ⎝⎣5  -3⎦  ⎣7 ⎦⎠
+
+    >>> syst = [ Eq(2*x + 3*y, 10), - 3*x + 5*y - 7 ]
+    >>> syst2matrix(syst)
+    ⎛⎡3  2 ⎤, ⎡10⎤⎞
+    ⎜⎢     ⎥  ⎢  ⎥⎟
+    ⎝⎣5  -3⎦  ⎣7 ⎦⎠
+    """
+    if variables == None:
+        variables = []
+        for equation in system:
+            variables += list(equation.atoms(Symbol))
+        variables = list(set(variables))
+    else:
+        variables = list(set(variables))
+    vars_to_zero = { k: 0 for k in variables }
+    matrix_of_the_system = []
+    const_of_the_system = []
+    for equation in system:
+        matrix_of_the_system.append([])
+        if isinstance(equation, Equality):
+            equation = (equation.lhs - equation.rhs)
+        const_of_the_system.append(-equation.subs(vars_to_zero))
+        for variable in variables:
+            matrix_of_the_system[-1].append(equation.expand().collect(variable).coeff(variable))
+    return Matrix(matrix_of_the_system), Matrix(const_of_the_system)
+# classical Mechanics
+#   ____ _               _           _ 
+#  / ___| | __ _ ___ ___(_) ___ __ _| |
+# | |   | |/ _` / __/ __| |/ __/ _` | |
+# | |___| | (_| \__ \__ \ | (_| (_| | |
+#  \____|_|\__,_|___/___/_|\___\__,_|_|
+#  __  __           _                 _          
+# |  \/  | ___  ___| |__   __ _ _ __ (_) ___ ___ 
+# | |\/| |/ _ \/ __| '_ \ / _` | '_ \| |/ __/ __|
+# | |  | |  __/ (__| | | | (_| | | | | | (__\__ \
+# |_|  |_|\___|\___|_| |_|\__,_|_| |_|_|\___|___/
+#
 def eleq(Lagrangian, Friction = 0, t = Symbol('t')):
     """
     Returns Euler-Lagrange equations of the lagrangian system.
@@ -584,7 +576,7 @@ def ieleq(Lagrangian, Friction = 0, t = Symbol('t')):
     Lagrangian = simplify(Lagrangian)
     var_list = [list(x.atoms(Function))[0] for x in Lagrangian.atoms(Derivative)]
     nvar = len(var_list)
-    # new variables.
+    # new variables
     str_list = [ str(variable).replace("("+str(t)+")","") for variable in var_list ]
     a_list = [ Symbol('a_' + str_list[i]) for i in range(nvar) ]
     v_list = [ Symbol('v_' + str_list[i]) for i in range(nvar) ]
@@ -593,7 +585,7 @@ def ieleq(Lagrangian, Friction = 0, t = Symbol('t')):
     x_subs = {var_list[i]: Symbol(str_list[i]) for i in range(nvar)}
     v0_subs = {diff(var_list[i],t): Symbol('v_' + str_list[i] + "0") for i in range(nvar)}
     x0_subs = {var_list[i]: Symbol(str_list[i] + "0") for i in range(nvar)}
-    # Obtención de las ecuaciones con integrales primeras.
+    # First integrals equations
     a_ecu = []
     v_ecu = []
     a_var = []
@@ -611,7 +603,7 @@ def ieleq(Lagrangian, Friction = 0, t = Symbol('t')):
             a_var.append(a_list[i])
             a_ecu.append((diff(dLv, t) - dLx).subs(a_subs).subs(v_subs).subs(x_subs))
             a_ecu[-1] += dFv.subs(a_subs).subs(v_subs).subs(x_subs)
-    # Resolución del sistema de ecuaciones.
+    # Solve system
     sol_dict = {}
     if len(v_var) != 0:
         sol_dict.update(solveswc(v_ecu, v_var))
@@ -652,6 +644,24 @@ def hamiltonian(Lagrangian, t = Symbol('t'), delta = False):
         return result
 
 def B(particleA, particleB):
+    """
+    Returns magnetic field expression between 'particleA' and 'particleB'.
+
+    Examples
+    ========
+
+    >>> B(1,2)
+    Matrix([
+    [ 9000000000.0*q1*(v_y1*(-z1 + z2) - v_z1*(-y1 + y2))/((-x1 + x2)**2 + (-y1 + y2)**2 + (-z1 + z2)**2)**(3/2)],
+    [9000000000.0*q1*(-v_x1*(-z1 + z2) + v_z1*(-x1 + x2))/((-x1 + x2)**2 + (-y1 + y2)**2 + (-z1 + z2)**2)**(3/2)],
+    [ 9000000000.0*q1*(v_x1*(-y1 + y2) - v_y1*(-x1 + x2))/((-x1 + x2)**2 + (-y1 + y2)**2 + (-z1 + z2)**2)**(3/2)]])
+
+    >>> B(7,3)
+    Matrix([
+    [ 9000000000.0*q7*(v_y7*(z3 - z7) - v_z7*(y3 - y7))/((x3 - x7)**2 + (y3 - y7)**2 + (z3 - z7)**2)**(3/2)],
+    [9000000000.0*q7*(-v_x7*(z3 - z7) + v_z7*(x3 - x7))/((x3 - x7)**2 + (y3 - y7)**2 + (z3 - z7)**2)**(3/2)],
+    [ 9000000000.0*q7*(v_x7*(y3 - y7) - v_y7*(x3 - x7))/((x3 - x7)**2 + (y3 - y7)**2 + (z3 - z7)**2)**(3/2)]])
+    """
     rAB = Matrix([eval("x"+str(particleB))-eval("x"+str(particleA)), eval("y"+str(particleB))-eval("y"+str(particleA)), eval("z"+str(particleB))-eval("z"+str(particleA))])
     vA = Matrix([eval("v_x"+str(particleA)), eval("v_y"+str(particleA)), eval("v_z"+str(particleA))])
     return 9.e9*eval("q"+str(particleA))/sqrt(rAB.dot(rAB))**3*vA.cross(rAB)
@@ -674,33 +684,118 @@ def VE(particleA, particleB):
 def VG(particleA, particleB):
     rAB = Matrix([eval("x"+str(particleB))-eval("x"+str(particleA)), eval("y"+str(particleB))-eval("y"+str(particleA)), eval("z"+str(particleB))-eval("z"+str(particleA))])
     return -6.67e-11*eval("m"+str(particleA))/sqrt(rAB.dot(rAB))*eval("m"+str(particleB))
-#############################################################
-#############################################################
-#############################################################
-#        Funciones para formateo de expresiones y salida
-#############################################################
-#############################################################
-#############################################################
+# Output Formatting
+#   ___        _               _   
+#  / _ \ _   _| |_ _ __  _   _| |_ 
+# | | | | | | | __| '_ \| | | | __|
+# | |_| | |_| | |_| |_) | |_| | |_ 
+#  \___/ \__,_|\__| .__/ \__,_|\__|
+#                 |_|              
+#  _____                          _   _   _             
+# |  ___|__  _ __ _ __ ___   __ _| |_| |_(_)_ __   __ _ 
+# | |_ / _ \| '__| '_ ` _ \ / _` | __| __| | '_ \ / _` |
+# |  _| (_) | |  | | | | | | (_| | |_| |_| | | | | (_| |
+# |_|  \___/|_|  |_| |_| |_|\__,_|\__|\__|_|_| |_|\__, |
+#                                                 |___/
+#
+def ifactor(x):
+    """
+    Factor integers. Formatting result in exponential form.
+    """
+    if isinstance(x, (Rational, Half)):
+        result = ifactor(x.p)/ifactor(x.q)
+    elif isinstance(x, list):
+        result = list(map(ifactor, x))
+    elif isinstance(x, dict):
+        result = {k: ifactor(v) for k, v in list(x.items())}
+    elif isinstance(x, Add):
+        result = 0
+        for arg in x.args:
+            result += ifactor(arg)
+    elif isinstance(x, Mul):
+        result = 1
+        for arg in x.args:
+            result *= ifactor(arg)
+    elif isinstance(x, Pow):
+        result = ifactor(x.base)**x.exp
+    elif isinstance(x, Symbol):
+        result = tryto(x.name, int)
+        if result == None:
+            result = x
+        else:
+            result = ifactor(result)
+    elif isinstance(x, (Integer, int)):
+        sig = sign(x)
+        x = abs(x)
+        if (x == 1)|(x == 0):
+            result = sig * Symbol(str(x))
+        else:
+            prim = primefactors(x)
+            expo = factorint(x)
+            result = sig * Symbol(str(prim[0])) ** expo[prim[0]]
+            for i in range(1, len(prim)):
+                result = result * Symbol(str(prim[i])) ** expo[prim[i]]
+    else:
+        x = nsimplify(x)
+        if not isinstance(x, Rational):
+            raise ValueError("Not Factorizable object.")
+        result = ifactor(x)
+    return result
+def lfactor(_x):
+    """
+    Factor integers. Latex output.
+    """
+    if isinstance(_x, (int, Integer, Zero, One, NegativeOne)):
+        if sign(_x) == -1:
+            _sign = "-"
+        else:
+            _sign = ""
+        _x = abs(_x)
+        if (_x == 1)|(_x == 0):
+            _lfactor = _sign + str(_x)
+        else:
+            _primes = primefactors(_x)
+            _exponents = factorint(_x)
+            _lfactor = _sign + "{" + str(_primes[0]) + "}^{" + str(_exponents[_primes[0]]) + "}"
+            for _i in range(1, len(_primes)):
+                _lfactor = _lfactor + "\cdot {" + str(_primes[_i]) + "}^{" + str(_exponents[_primes[_i]]) + "}"
+    elif isinstance(_x, (Rational, Half)):
+        _lfactor = "\\frac{" + lfactor(_x.p) + "}{" + lfactor(_x.q) + "}"
+    elif isinstance(_x, list):
+        _lfactor = list(map(lfactor, _x))
+    elif isinstance(_x, dict):
+        _lfactor = {}
+        for _k in list(_x.keys()):
+            _lfactor[_k] = lfactor(_x[_k])
+    return _lfactor
 def polar_deg(x):
+    """
+    Subscript polar notation for complex numbers. Latex output.
+    Degrees units.
+    """
     x = polar(complex(x))
-    result = str(Float(x[0]).evalf(digits)) + "_{"
-    result += str((Float(x[1])*180/pi).evalf(digits)) + "^\\circ}"
+    result = str(Float(x[0]).evalf(__digits__)) + "_{"
+    result += str((Float(x[1])*180/pi).evalf(__digits__)) + "^\\circ}"
     return result
 def polar_rad(x):
+    """
+    Subscript polar notation for complex numbers. Latex output.
+    Radians units.
+    """
     x = polar(complex(x))
-    result = str(Float(x[0]).evalf(digits)) + "_{"
-    result += str((Float(x[1])/pi).evalf(digits)) + "\\pi\\;rad}"
+    result = str(Float(x[0]).evalf(__digits__)) + "_{"
+    result += str((Float(x[1])/pi).evalf(__digits__)) + "\\pi\\;rad}"
     return result
 def latexsy(_x, dicti = {}):
-#    dicti.update(dir_physics_order)
-#    _latexsy = latex(subs(_x, inv_physics_order), symbol_names = dicti)
     dicti.update(__variable_names__)
     _latexsy = latex(_x, symbol_names = dicti)
     _latexsy = regexp.sub("([^_a-zA-Z])i([^_a-zA-Z]|$)", "\\1\\\\I\\2", _latexsy)
     _latexsy = regexp.sub("\.0([^0-9]|$)", "\\1", _latexsy)
     return _latexsy
-# Parte las matrices de más de 'n' columnas.
 def split_mat(_s, _n):
+    """
+    Split output matrix '_s' if has more than '_n' columns
+    """
     _start = regexp.search("\\\\begin\{(.?|small)matrix\}", _s).end()
     _end   = regexp.search("\\\\end\{(.?|small)matrix\} *$", _s).start()
     _first = _s.find("\\\\", _start, _end)
@@ -738,57 +833,41 @@ def split_mat(_s, _n):
                     _subst = "  \\\\\n ...  "
             _split_mat = _split_mat[:_pos_list[_i]] + _subst + _split_mat[_pos_list[_i]:]
     return _split_mat
-# def significant_digits(expr):
-#     if isinstance(expr, float):
-#         result = Float(expr).evalf(digits)
-#     elif isinstance(expr, Float):
-#         result = expr.evalf(digits)
-#     elif isinstance(expr, Mul):
-#         result = 1
-#         for arg in expr.args:
-#             result *= significant_digits(arg)
-#     elif isinstance(expr, Pow):
-#         result = significant_digits(expr.base)**expr.exp
-#     elif isinstance(expr, Add):
-#         result = 0
-#         for arg in expr.args:
-#             result += significant_digits(arg)
-#     elif isinstance(expr, list):
-#         result = [ significant_digits(i) for i in expr ]
-#     elif isinstance(expr, tuple):
-#         result = tuple([ significant_digits(i) for i in expr ])
-#     elif isinstance(expr, dict):
-#         result = { key: significant_digits(value) for key, value in list(expr.items())}
-#     elif isinstance(expr, Equality):
-#         result = Eq(significant_digits(expr.lhs), significant_digits(expr.rhs))
-#     elif isinstance(expr, Matrix):
-#         result = Matrix([ [ significant_digits(expr[i,j]) for j in range(expr.cols) ] for i in range(expr.rows) ])
-#     # Comienzo de funciones.
-#     elif isinstance(expr, Function):
-#         result = type(expr)(*( significant_digits(i) for i in expr.args ))
-#     else:
-#         result = expr
-#     return result
 def physics_format(expr, dicti = {}):
-    # Simplifica las unidades
+    """
+    Process physical units.
+    """
+    # Simplify units
     if atoms(expr, un.Unit):
         for subst in units_format:
             expr = subs(expr, subst)
-    # Corta en 'digits' cifras significativas
-    if isinstance(digits, (int, Integer)):
-        return cevalf(expr, digits) #significant_digits(expr)
+    # Round '__digits__' significant figures
+    import __main__
+    if "__digits__" in dir(__main__):
+        __digits__ = __main__.__digits__
+    if isinstance(__digits__, (int, Integer)):
+        return cevalf(expr, __digits__) #significant_digits(expr)
     else:
         return expr
-#############################################################
-#############################################################
-#############################################################
-#               Funciones para Matemáticas.
-#############################################################
-#############################################################
-#############################################################
-# Encuentra ecuaciones lineales con soluciones dadas
-# y coeficientes menores que 'layer'.
+# Diophantine equations
+#  ____  _             _                 _   _            
+# |  _ \(_) ___  _ __ | |__   __ _ _ __ | |_(_)_ __   ___ 
+# | | | | |/ _ \| '_ \| '_ \ / _` | '_ \| __| | '_ \ / _ \
+# | |_| | | (_) | |_) | | | | (_| | | | | |_| | | | |  __/
+# |____/|_|\___/| .__/|_| |_|\__,_|_| |_|\__|_|_| |_|\___|
+#               |_|                                       
+#                         _   _                 
+#   ___  __ _ _   _  __ _| |_(_) ___  _ __  ___ 
+#  / _ \/ _` | | | |/ _` | __| |/ _ \| '_ \/ __|
+# |  __/ (_| | |_| | (_| | |_| | (_) | | | \__ \
+#  \___|\__, |\__,_|\__,_|\__|_|\___/|_| |_|___/
+#          |_|
+#
 def c_sol2lin(sols, layer = [1,20], equation = True, nonzero = [], nonneg = [], linears = -1):
+    """
+    Find linear equations with 'sols' solutions and coefficients in 'layer'.
+    Using c to improve speed.
+    """
     nvars = len(sols) + 1
     if linears == -1:
         linears = nvars - 1
@@ -809,31 +888,31 @@ def c_sol2lin(sols, layer = [1,20], equation = True, nonzero = [], nonneg = [], 
     sols = list(map(nsimplify,sols))
     z = lcm(list(map(lambda x: x.q, sols)))
     sols = list(map(lambda x, lz=z: x*lz, sols)) + [z]
-    ## Uso de librería externa
+    ## Needed to call c code
     import ctypes
-    # Librería
+    # c library
     c_lib = ctypes.cdll.LoadLibrary('./cpppytex.so')
-    # Parámetros entrada
+    # parameters
     c_coef = (ctypes.c_int * nvars)(*sols)
     c_ncoef = ctypes.c_uint(nvars)
     c_layer = (ctypes.c_int * 2)(*layer)
     c_nonzero = (ctypes.c_bool * nvars)(*nonzero)
     c_nonneg = (ctypes.c_bool * nvars)(*nonneg)
     c_linears = ctypes.c_uint(linears)
-    # Formato de la entrada
+    # Format input
     c_lib.dioph_lin.argtypes = [ctypes.POINTER(ctypes.c_int), ctypes.c_uint,
     ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_bool),
     ctypes.POINTER(ctypes.c_bool), ctypes.POINTER(ctypes.POINTER(ctypes.c_int)),
     ctypes.c_uint]
-    # Parámetros salida
+    # Output
     c_result = (ctypes.POINTER(ctypes.c_int) * linears)()
     for i in range(linears):
         c_result[i] = (ctypes.c_int * nvars)()
-    # Formato de la salida
+    # Format output
     c_lib.dioph_lin.restype = ctypes.c_uint
-    # Llamada
+    # Call c code
     linears = c_lib.dioph_lin(c_coef, c_ncoef, c_layer, c_nonzero, c_nonneg, c_result, c_linears)
-    # Procesado de la salida
+    # Process output
     result = []
     for i in range(linears):
         result.append([])
@@ -851,6 +930,9 @@ def c_sol2lin(sols, layer = [1,20], equation = True, nonzero = [], nonneg = [], 
     else:
         return result
 def sol2lin(sols, layer = [1,20], equation = True, nonzero = [], nonneg = [], linears = -1):
+    """
+    Find linear equations with 'sols' solutions and coefficients in 'layer'.
+    """
     nvars = len(sols) + 1
     if linears == -1:
         linears = nvars - 1
@@ -954,28 +1036,19 @@ def sol2lin(sols, layer = [1,20], equation = True, nonzero = [], nonneg = [], li
         return equations
     else:
         return systems
-# Encuentra las soluciones de una ecuación diofántica.
 def isolve(equations, layer = [1,10], nonzero = [], nonneg = [], nsols = -1):
     """
-       Devuelve una lista con soluciones enteras que verifican todas las
-       ecuaciones.
+    Returns a list of integer solutions that satisfy all equations.
 
-    'equations' - Ecuación o lista de ecuaciones a resolver.
-    'layer'     - Capa o intervalo de capas entre los que se buscará
-                      soluciones.
-    'nonzero'   - Booleano o lista de booleanos que excluirán (true)
-                      o incluirán (false) el 0 entre los valores
-                      enteros posibles de las variables. En caso de
-                      un sólo booleano se aplicará el mismo criterio
-                      a todas las variables.
-    'nonneg'    - Booleano o lista de booleanos que excluirán (true)
-                      o incluirán (false) valores negativos en las
-                      asignaciones a las variables. En caso de un
-                      sólo booleano se aplicará el mismo criterio a
-                      todas las variables.
-    'nsols'     - Natural que será el número de soluciones a buscar.
-                      -1 indica que se buscarán todas las soluciones
-                      en el intervalo de capas indicado.
+    'equations' - Equation or list of equations to be solved.
+    'layer'     - Layer or layers to be searched solutions.
+    'nonzero'   - Boolean or boolean list. Boolean means a Boolean
+                      list with the same value. nth Boolean 'True'
+                      means nth variable has non zero value.
+    'nonneg'    - Boolean or boolean list. Boolean means a Boolean
+                      list with the same value. nth Boolean 'True'
+                      means nth variable has non negative value.
+    'nsols'     - Looking 'nsols' solutions. -1 finds all solutions.
     """
     if not isinstance(equations, list):
         equations = [ equations ]
@@ -1066,8 +1139,19 @@ def isolve(equations, layer = [1,10], nonzero = [], nonneg = [], nsols = -1):
         if n_sols == nsols:
             break
     return solutions
-# Calcula la inversa completa de la tangente.
+# Trigonometry
+#  _____     _                                        _              
+# |_   _| __(_) __ _  ___  _ __   ___  _ __ ___   ___| |_ _ __ _   _ 
+#   | || '__| |/ _` |/ _ \| '_ \ / _ \| '_ ` _ \ / _ \ __| '__| | | |
+#   | || |  | | (_| | (_) | | | | (_) | | | | | |  __/ |_| |  | |_| |
+#   |_||_|  |_|\__, |\___/|_| |_|\___/|_| |_| |_|\___|\__|_|   \__, |
+#              |___/                                           |___/
+#
 def arctan(x,y,semi=False):
+    """
+    Arctan between -pi/2 and pi/2, semi = True;
+           between -pi   and pi,   semi = False;
+    """
     if x == 0:
         if sign(y) == -1:
             return -pi/2
@@ -1080,6 +1164,13 @@ def arctan(x,y,semi=False):
             return atan(y/x) + pi
         else:
             return atan(y/x)
+# Statistics
+#  ____  _        _   _     _   _          
+# / ___|| |_ __ _| |_(_)___| |_(_) ___ ___ 
+# \___ \| __/ _` | __| / __| __| |/ __/ __|
+#  ___) | || (_| | |_| \__ \ |_| | (__\__ \
+# |____/ \__\__,_|\__|_|___/\__|_|\___|___/
+#
 def mode_cont_pure(X):
     n = len(X)
     difs = []
@@ -1097,16 +1188,15 @@ def mode_cont(X):
     frec_list = [ 0 for i in range(101)]
     for i in range(len(X)):
         frec_list[int(float(X[i]-min_value)//float(dif_value))] += 1
-    #ep(X)
-    #ep(frec_list, frec_list.index(max(frec_list))*dif_value + min_value)
-    #ep("")
     return frec_list.index(max(frec_list))*dif_value + min_value
-def tryto(x, constructor):
-    try:
-        result = constructor(x)
-        return result
-    except ValueError:
-        return None
+# Strings
+#  ____  _        _                 
+# / ___|| |_ _ __(_)_ __   __ _ ___ 
+# \___ \| __| '__| | '_ \ / _` / __|
+#  ___) | |_| |  | | | | | (_| \__ \
+# |____/ \__|_|  |_|_| |_|\__, |___/
+#                         |___/
+#
 def numbersstr(_x):
     _numbersstr = []
     _x = regexp.sub("(\-?[0-9]*\.?[0-9]+)", "\",\"\\1\",\"", _x)
@@ -1117,135 +1207,187 @@ def numbersstr(_x):
         if _tmp != None:
             _numbersstr.append(_tmp)
     return _numbersstr
-# Generador de expresiones
-# [ symb expr, expr eval(expr), str latex(expr) ] =
-#     genexpr(str operator list, expr elements list, int maximo, str frac)
-def genexpr(_opers, _elems, maxim = 0, factor = False, evaluate = False, cover = None, tostr = str):
-    global __rand__
-    if len(_elems) < 2:
-        sys.exit("Error: genexpr: se necesitan más elementos en línea " + str(_nline_))
-    if len(_opers) + 1 < len(_elems):
-        sys.exit("Error: genexpr: se necesitan más operadores en línea " + str(_nline_))
-    _results = []
-    if cover == None:
-        __rand__ = Cover()
+def delim(_s, begin = None, paren = [ "([{$", ")]}$" ], step = 1):
+    _m = [len(_s) - 1, 0]
+    _find = True
+    if step >= 0:
+        _inc = 1
+        _d = 0
     else:
-        __rand__ = cover
-    functions = ["randrange", "randint", "indexes", "jumble"]
-    _finding = True
-    while _finding:
-        _elements = list(_elems)
-        _operators = list(_opers)
-        if evaluate:
-            _elements = [isinstance(x, str) and regexp.sub("([a-zA-Z_][a-zA-Z_0-9]*)($|[\)\]\}\+\-\*/ ,])", _repl_val_, evalfun(x, functions, "__rand__.")) or tostr(x) for x in _elements]
-            _elements = [isinstance(x, str) and tostr(eval(x)) or tostr(x) for x in _elements]
-        else:
-            _elements = [isinstance(x, str) and regexp.sub("([a-zA-Z_][a-zA-Z_0-9]*)($|[\)\]\}\+\-\*/ ,])", _repl_val_, evalfun(x, functions, "__rand__.")) or tostr(x) for x in _elements]
-        while len(_elements) != 1:
-            _iel = __rand__.indexes(len(_elements),2)
-            _iop = __rand__.randrange(len(_operators))
-            _tmp_ele0 = eval(_elements[_iel[0]].replace("/", "*Rational(1)/"))
-            _tmp_ele1 = eval(_elements[_iel[1]].replace("/", "*Rational(1)/"))
-            if (_operators[_iop] == "/")&(_tmp_ele1 == 0):
-                _element = "("+_elements[_iel[0]]+")" + _operators[_iop] + "("+_elements[_iel[1]]+"+1)"
-            elif (_operators[_iop] == "**")&(eval("sign("+tostr(_tmp_ele0)+")") == -1)&(eval("("+tostr(_tmp_ele1)+") % 1") != 0):
-                _element = "(-("+_elements[_iel[0]]+"))" + _operators[_iop] + "("+_elements[_iel[1]]+")"
-            else:
-                _element = "("+_elements[_iel[0]]+")" + _operators[_iop] + "("+_elements[_iel[1]]+")"
-            _elements[_iel[0]] = _element
-            del _elements[_iel[1]]
-            del _operators[_iop]
-        _solution = eval(_elements[0].replace("/", "*Rational(1)/"))
-        if factor:
-            _solution = ifactor(_solution)
-        if maxim == 0:
-            _finding = False
-        else:
-            _results.append(_elements[0])
-            _results.sort()
-            _maxim = max(list(map(abs, numbersstr(str(_solution)))))
-            if not next(__rand__):
-                sys.exit("Error: genexpr: no se encuentra expresión. Línea: " + str(_nline_))
-            if _maxim <= maxim:
-                _finding = False
-    return _elements[0]
-# Factorizador de enteros
-# symb factorization = ifactor(int integer)
-def ifactor(x):
-    if isinstance(x, (Rational, Half)):
-        result = ifactor(x.p)/ifactor(x.q)
-    elif isinstance(x, list):
-        result = list(map(ifactor, x))
-    elif isinstance(x, dict):
-        result = {k: ifactor(v) for k, v in list(x.items())}
-    elif isinstance(x, Add):
-        result = 0
-        for arg in x.args:
-            result += ifactor(arg)
-    elif isinstance(x, Mul):
-        result = 1
-        for arg in x.args:
-            result *= ifactor(arg)
-    elif isinstance(x, Pow):
-        result = ifactor(x.base)**x.exp
-    elif isinstance(x, Symbol):
-        result = tryto(x.name, int)
-        if result == None:
-            result = x
-        else:
-            result = ifactor(result)
+        _inc = -1
+        _d = 1
+    if begin == None:
+        begin = _m[1-_d]
     else:
-        sig = sign(x)
-        x = abs(x)
-        if (x == 1)|(x == 0):
-            result = sig * Symbol(str(x))
+        if begin > _m[0]:
+            return None, None
+    while not _s[begin] in paren[_d]:
+        begin += _inc
+        if _inc*begin > _inc*_m[_d]:
+            _find = False
+            break
+    if not _find:
+        return None, None
+    end = begin
+    _de = ["", ""]
+    _de[_d] = _s[end]
+    if isinstance(paren, list):
+        _tmp = paren[_d].find(_de[_d])
+        _de[1-_d] = paren[1-_d][_tmp]
+    else:
+        _de[1-_d] = paren[1-_d]
+    _p = 1
+    while _p != 0:
+        end += _inc
+        if _inc*begin > _inc*_m[_d]:
+            _find = False
+            break
+        if _s[end] == _de[1-_d]:
+            _p -= 1
+        elif _s[end] == _de[_d]:
+            _p += 1
+    if _find:
+        if _inc == 1:
+            return begin, end
         else:
-            prim = primefactors(x)
-            expo = factorint(x)
-            result = sig * Symbol(str(prim[0])) ** expo[prim[0]]
-            for i in range(1, len(prim)):
-                result = result * Symbol(str(prim[i])) ** expo[prim[i]]
+            return end, begin
+    else:
+        return None, None
+def arguments(s, begin = None, paren = [ "([{", ")]}" ], step = 1):
+    begin, end = delim(s, begin, paren, step)
+    if end == None:
+        return []
+    result = [ begin ]
+    pos = begin + 1
+    while pos < end:
+        if s[pos] in "([{$":
+            _, pos = delim(s, pos)
+        elif s[pos] == ",":
+            result.append(pos)
+        pos += 1
+    if pos != end:
+        raise NameError('Bloque sin cierre.')
+    result.append(end)
+    params = []
+    for index in range(len(result)-1):
+        params.append(s[result[index]+1:result[index+1]])
+    return params
+def iarguments(s, begin = None, paren = [ "([{", ")]}" ], step = 1):
+    begin, end = delim(s, begin, paren, step)
+    if end == None:
+        return [ -1 ]
+    result = [ begin ]
+    pos = begin + 1
+    while pos < end:
+        if s[pos] in "([{$":
+            _, pos = delim(s, pos)
+        elif s[pos] == ",":
+            result.append(pos)
+        pos += 1
+    if pos != end:
+        raise NameError('Bloque sin cierre.')
+    result.append(end)
     return result
-# Factorizador de enteros
-# str factorization = lfactor(int integer)
-def lfactor(_x):
-    if isinstance(_x, (int, Integer, Zero, One, NegativeOne)):
-        if sign(_x) == -1:
-            _sign = "-"
-        else:
-            _sign = ""
-        _x = abs(_x)
-        if (_x == 1)|(_x == 0):
-            _lfactor = _sign + str(_x)
-        else:
-            _primes = primefactors(_x)
-            _exponents = factorint(_x)
-            _lfactor = _sign + "{" + str(_primes[0]) + "}^{" + str(_exponents[_primes[0]]) + "}"
-            for _i in range(1, len(_primes)):
-                _lfactor = _lfactor + "\cdot {" + str(_primes[_i]) + "}^{" + str(_exponents[_primes[_i]]) + "}"
-    elif isinstance(_x, (Rational, Half)):
-        _lfactor = "\\frac{" + lfactor(_x.p) + "}{" + lfactor(_x.q) + "}"
-    elif isinstance(_x, list):
-        _lfactor = list(map(lfactor, _x))
-    elif isinstance(_x, dict):
-        _lfactor = {}
-        for _k in list(_x.keys()):
-            _lfactor[_k] = lfactor(_x[_k])
-    return _lfactor
-# Lista primos menores que n.
-# list primes = primes(int integer)
-def primes(n):
-    """ Returns  a list of primes < n """
-    sieve = [True] * n
-    for i in range(3,int(n**0.5)+1,2):
-        if sieve[i]:
-            sieve[i*i::2*i]=[False]*((n-i*i-1)//(2*i)+1)
-    return [2] + [i for i in range(3,n,2) if sieve[i]]
-# Generación aleatoria de coprimos
-# list two coprimes = coprime(int start, int stop)
+def delim_fun(_s, _i, step = 1):
+    _v = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789."
+    _m = len(_s) - 1
+    _del = [ "([{$", ")]}$" ]
+    _lst = [ "([{+-*/ ,:=", ")]}+-*/ ,:=" ]
+    if step >= 0:
+        _inc = 1
+        _d = 0
+    else:
+        _inc = -1
+        _d = 1
+    while _s[_i] == " ":
+        _i += _inc
+    _j = _i
+    if _inc == 1:
+        while (_s[_j] in _v)&(_j != _m):
+            _j += _inc
+        while (_s[_j] == " ")&(_j != _m):
+            _j += _inc
+    if _s[_j] in _del[_d]:
+        _de = ["", ""]
+        _de[_d] = _s[_j]
+        _tmp = _del[_d].find(_de[_d])
+        _de[1-_d] = _del[1-_d][_tmp]
+        _p = 1
+        while _p != 0:
+            _j += _inc
+            if _s[_j] == _de[1-_d]:
+                _p -= 1
+            elif _s[_j] == _de[_d]:
+                _p += 1
+        if _inc == -1:
+            if _j != 0:
+                _j += _inc
+                while (_s[_j] in _v)&(_j != 0):
+                    _j += _inc
+                _j -= _inc
+    else:
+        while (not _s[_j] in _lst[1-_d])&(_j != _m)&(_j != 0):
+            _j += _inc
+        if _s[_j] in _lst[1-_d]:
+            _j -= _inc
+    if _inc == 1:
+        return _i, _j
+    else:
+        return _j, _i
+# Random
+#  ____                 _                 
+# |  _ \ __ _ _ __   __| | ___  _ __ ___  
+# | |_) / _` | '_ \ / _` |/ _ \| '_ ` _ \ 
+# |  _ < (_| | | | | (_| | (_) | | | | | |
+# |_| \_\__,_|_| |_|\__,_|\___/|_| |_| |_|
+#
+def indexes(length, amount = 1):
+    result = []
+    indexes_list = list(range(length))
+    for i in range(amount):
+        tmp = randrange(length)
+        result.append(indexes_list[tmp])
+        del indexes_list[tmp]
+        length -= 1
+    return result
+def jumble(_x, items = 0):
+    shuffle(_x)
+    if items == 0:
+        _jumble = _x
+    else:
+        _jumble = tuple(_x[0:items])
+    return _jumble
+def randmags(start, end, amount, unit = 1):
+    result = indexes(end - start + 1, amount)
+    result = list(map(lambda x, s=start, u=unit: float(x + s)*u, result))
+    if amount == 1:
+        return result[0]
+    else:
+        return tuple(result)
+def randfrac(num, den):
+    """
+    Rational Fraction = randfrac(num, den)
+
+    Returns random fraction with numerator in 'num' list and
+    denominator in 'den' list. If 'num' or 'den' are numbers
+    then numerator is at most 'num' and denominator is at
+    most 'den'.
+    """
+    if not isinstance(num, list):
+        num = range(1, num + 1)
+    if not isinstance(den, list):
+        den = range(2, den + 1)
+    den = choice(den)
+    num = choice([ i for i in num if gcd(i, den) == 1 ])
+    return Rational(num, den)
 def coprimes(_x, _y, _num = 2):
+    """
+    list two coprimes = coprime(int start, int stop)
+
+    Random coprimes.
+    """
     if _y - _x < 1:
-        sys.exit("Error: coprimes: Segundo parámetro debe ser extrictamente mayor que el primero. Línea: " + str(_nline_))
+        sys.exit("Error: coprimes: '_x' < '_y'")
     _ini = list(range(_x, _y + 1))
     _find = 0
     while (_find < _num)&(len(_ini) != 0):
@@ -1267,57 +1409,118 @@ def coprimes(_x, _y, _num = 2):
     if _find < _num:
         sys.exit("Error: coprimes: Insuficientes coprimos en el intervalo. Línea: " + str(_nline_))
     return _coprimes
+def genexpr(_opers, _elems, maxim = 0, factor = False, evaluate = False, cover = None, tostr = str):
+    """
+    [ symb expr, expr eval(expr), str latex(expr) ]
+    = genexpr(str operator list, expr elements list, int maxim, str frac)
+    
+    Random expression generator.
+    """
+    global __rand__
+    if len(_elems) < 2:
+        sys.exit("Error: genexpr: more elements required")
+    if len(_opers) + 1 < len(_elems):
+        sys.exit("Error: genexpr: more operators required")
+    _results = []
+    if cover == None:
+        __rand__ = Cover()
+    else:
+        __rand__ = cover
+    functions = ["randrange", "randint", "indexes", "jumble"]
+    _finding = True
+    while _finding:
+        _elements = list(_elems)
+        _operators = list(_opers)
+        if evaluate:
+            _elements = [isinstance(x, str) and regexp.sub("([a-zA-Z_][a-zA-Z_0-9]*)($|[\)\]\}\+\-\*/ ,])", _repl_val_, evalfun(x, functions, "__rand__.")) or tostr(x) for x in _elements]
+            _elements = [isinstance(x, str) and tostr(eval(x)) or tostr(x) for x in _elements]
+        else:
+            _elements = [isinstance(x, str) and regexp.sub("([a-zA-Z_][a-zA-Z_0-9]*)($|[\)\]\}\+\-\*/ ,])", _repl_val_, evalfun(x, functions, "__rand__.")) or tostr(x) for x in _elements]
+        while len(_elements) != 1:
+            _iel = __rand__.indexes(len(_elements),2)
+            _iop = __rand__.randrange(len(_operators))
+            _tmp_ele0 = S(_elements[_iel[0]])
+            _tmp_ele1 = S(_elements[_iel[1]])
+            if (_operators[_iop] == "/")&(_tmp_ele1 == 0):
+                _element = "("+_elements[_iel[0]]+")" + _operators[_iop] + "("+_elements[_iel[1]]+"+1)"
+            elif (_operators[_iop] == "**")&(eval("sign("+tostr(_tmp_ele0)+")") == -1)&(eval("("+tostr(_tmp_ele1)+") % 1") != 0):
+                _element = "(-("+_elements[_iel[0]]+"))" + _operators[_iop] + "("+_elements[_iel[1]]+")"
+            else:
+                _element = "("+_elements[_iel[0]]+")" + _operators[_iop] + "("+_elements[_iel[1]]+")"
+            _elements[_iel[0]] = _element
+            del _elements[_iel[1]]
+            del _operators[_iop]
+        _solution = S(_elements[0])
+        if factor:
+            _solution = ifactor(_solution)
+        if maxim == 0:
+            _finding = False
+        else:
+            _results.append(_elements[0])
+            _results.sort()
+            _maxim = max(list(map(abs, numbersstr(str(_solution)))))
+            if not next(__rand__):
+                sys.exit("Error: genexpr: no se encuentra expresión. Línea: " + str(_nline_))
+            if _maxim <= maxim:
+                _finding = False
+    return _elements[0]
+# Arithmetic
+#     _         _ _   _                    _   _      
+#    / \   _ __(_) |_| |__  _ __ ___   ___| |_(_) ___ 
+#   / _ \ | '__| | __| '_ \| '_ ` _ \ / _ \ __| |/ __|
+#  / ___ \| |  | | |_| | | | | | | | |  __/ |_| | (__ 
+# /_/   \_\_|  |_|\__|_| |_|_| |_| |_|\___|\__|_|\___|
+#
+def primes(n):
+    """ Returns  a list of primes < n """
+    sieve = [True] * n
+    for i in range(3,int(n**0.5)+1,2):
+        if sieve[i]:
+            sieve[i*i::2*i]=[False]*((n-i*i-1)//(2*i)+1)
+    return [2] + [i for i in range(3,n,2) if sieve[i]]
 def divisors(number):
     result = []
     for i in range(1,number):
         if (number % i == 0):
             result.append(i)
     return result
-# Deja el sistema 'system' en términos de las variables
-# 'variables' gracias a las ecuaciones 'equations'.
-# list Eq = syst_subs( list system, list equations, list variables )
-def syst_subs(system, equations, *params):
-    variables = []
-    arrange = False
-    for param in params:
-        if isinstance(param, bool):
-            arrange = param
-        else:
-            variables = param
-    variables = set(variables)
-    system_vars = []
-    for equation in system:
-        system_vars += list(equation.atoms(Symbol))
-    system_vars = set(system_vars)
-    equations_vars = []
-    for equation in equations:
-        equations_vars += list(equation.atoms(Symbol))
-    equations_vars = set(equations_vars)
-    # Despejamos las variables que vamos a sustituir.
-    substitution = solve(equations, (system_vars|equations_vars)-variables)
-    if arrange:
-        vars_to_zero = {variable: 0 for variable in system_vars}
-    result = []
-    for equation in system:
-        if isinstance(equation, Equality):
-            if arrange:
-                replaced = collect((equation.lhs - equation.rhs).subs(substitution).expand(), variables)
-                varless = replaced.subs(vars_to_zero)
-                result.append(Eq(replaced - varless, -varless))
-            else:
-                equation = equation.subs(substitution)
-                result.append(Eq(collect(equation.lhs.expand(), variables), collect(equation.rhs.expand(), variables)))
-        else:
-            replaced = collect(equation.subs(substitution).expand(), variables)
-            if arrange:
-                varless = replaced.subs(vars_to_zero)
-                result.append(Eq(replaced - varless, -varless))
-            else:
-                result.append(replaced)
-    return result
-# Sustituidor generalizado, comprueba si el objeto admite
-# sustitución antes de sustituir.
+# Improved Sympy
+#  ___                                        _ 
+# |_ _|_ __ ___  _ __  _ __ _____   _____  __| |
+#  | || '_ ` _ \| '_ \| '__/ _ \ \ / / _ \/ _` |
+#  | || | | | | | |_) | | | (_) \ V /  __/ (_| |
+# |___|_| |_| |_| .__/|_|  \___/ \_/ \___|\__,_|
+#               |_|                             
+#  ____                              
+# / ___| _   _ _ __ ___  _ __  _   _ 
+# \___ \| | | | '_ ` _ \| '_ \| | | |
+#  ___) | |_| | | | | | | |_) | |_| |
+# |____/ \__, |_| |_| |_| .__/ \__, |
+#        |___/          |_|    |___/
+#
+def tryto(x, constructor):
+    try:
+        result = constructor(x)
+        return result
+    except ValueError:
+        return None
+def mapi(list_fun, list_param):
+    """
+    Scalar product of functions list and parameters list.
+    """
+    return [ list_fun[i](param) for i, param in enumerate(list_param) ]
+def remove(_list, _elem):
+    """
+    Remove second list elements from the first list and return result.
+    """
+    _tmp = copy.deepcopy(_list)
+    for item_to_remove in _elem:
+        _tmp.remove(item_to_remove)
+    return _tmp
 def subs(expression, *params):
+    """
+    Generalized substitution where possible
+    """
     if isinstance(expression, list):
         return [ subs(item, *params) for item in expression ]
     elif isinstance(expression, dict):
@@ -1334,6 +1537,9 @@ def subs(expression, *params):
         else:
             return expression
 def atoms(expression, *params):
+    """
+    Generalized atoms where possible
+    """
     if isinstance(expression, list):
         result = set([])
         for item in expression:
@@ -1349,15 +1555,15 @@ def atoms(expression, *params):
             return expression.atoms(*params)
         else:
             return set([])
-def roundn(number, digits):
+def roundn(number, __digits__):
     number = float(number)
-    if digits > 0:
+    if __digits__ > 0:
         if number == 0:
             return 0
         else:
-            return round(number, -int(np.floor(np.log10(np.abs(number))) - digits + 1))
+            return round(number, -int(np.floor(np.log10(np.abs(number))) - __digits__ + 1))
     else:
-        return round(number, -digits)
+        return round(number, -__digits__)
 def rounds(expr, *params):
     return recursive_rounds(N(expr), *params)
 def recursive_rounds(expr, *params):
@@ -1423,65 +1629,23 @@ def cevalf(expression, *params):
                 return expression
         else:
             return expression
-# Función mejorada en proyecto.
-#def syst_subs(system, variables):
-#    system_vars = []
-#    for equation in system:
-#        system_vars += list(equation.atoms(Symbol))
-#    system_vars = list(set(system_vars))
-#    remove_vars = remove(system_vars, variables)
-#def collectEq( _eq, _vars):
-#    return Eq(collect(_eq.lhs.expand(), _vars), collect(_eq.rhs.expand(), _vars))
-# Devuelve la matriz de un sistema de ecuaciones.
-# Matrix matriz del sistema = syst2matrix(list system, list variables):
-def syst2matrix(system, variables=None):
-    """
-    Returns A, B matrices of the system A·X = B.
-
-    Examples
-    ========
-
-    >>> from sympy import *
-    >>> x, y, z = symbols('x y z')
-    >>> syst = [ 2*x + 3*y - 10, - 3*x + 5*y - 7 ]
-    >>> syst2matrix(syst)
-    ⎛⎡2   3⎤, ⎡10⎤⎞
-    ⎜⎢     ⎥  ⎢  ⎥⎟
-    ⎝⎣-3  5⎦  ⎣7 ⎦⎠
-
-    >>> syst = [ Eq(2*x + 3*y, 10), Eq(- 3*x + 5*y, 7) ]
-    >>> syst2matrix(syst)
-    ⎛⎡3  2 ⎤, ⎡10⎤⎞
-    ⎜⎢     ⎥  ⎢  ⎥⎟
-    ⎝⎣5  -3⎦  ⎣7 ⎦⎠
-
-    >>> syst = [ Eq(2*x + 3*y, 10), - 3*x + 5*y - 7 ]
-    >>> syst2matrix(syst)
-    ⎛⎡3  2 ⎤, ⎡10⎤⎞
-    ⎜⎢     ⎥  ⎢  ⎥⎟
-    ⎝⎣5  -3⎦  ⎣7 ⎦⎠
-    """
-    if variables == None:
-        variables = []
-        for equation in system:
-            variables += list(equation.atoms(Symbol))
-        variables = list(set(variables))
-    else:
-        variables = list(set(variables))
-    vars_to_zero = { k: 0 for k in variables }
-    matrix_of_the_system = []
-    const_of_the_system = []
-    for equation in system:
-        matrix_of_the_system.append([])
-        if isinstance(equation, Equality):
-            equation = (equation.lhs - equation.rhs)
-        const_of_the_system.append(-equation.subs(vars_to_zero))
-        for variable in variables:
-            matrix_of_the_system[-1].append(equation.expand().collect(variable).coeff(variable))
-    return Matrix(matrix_of_the_system), Matrix(const_of_the_system)
-# Aproxima la integral de una expresión mediante rectángulos.
-# Da una cóta mínima y otra máxima.
+# Numerical approximations
+#  _   _                           _           _ 
+# | \ | |_   _ _ __ ___   ___ _ __(_) ___ __ _| |
+# |  \| | | | | '_ ` _ \ / _ \ '__| |/ __/ _` | |
+# | |\  | |_| | | | | | |  __/ |  | | (_| (_| | |
+# |_| \_|\__,_|_| |_| |_|\___|_|  |_|\___\__,_|_|
+#                                  _                 _   _                 
+#   __ _ _ __  _ __  _ __ _____  _(_)_ __ ___   __ _| |_(_) ___  _ __  ___ 
+#  / _` | '_ \| '_ \| '__/ _ \ \/ / | '_ ` _ \ / _` | __| |/ _ \| '_ \/ __|
+# | (_| | |_) | |_) | | | (_) >  <| | | | | | | (_| | |_| | (_) | | | \__ \
+#  \__,_| .__/| .__/|_|  \___/_/\_\_|_| |_| |_|\__,_|\__|_|\___/|_| |_|___/
+#       |_|   |_|
+#
 def integrate_rectangle(expr, variable = Symbol('x'), interval = [0,1], steps = 1):
+    """
+    Maximum and minimum Riemann summations. Approximation using rectangles.
+    """
     interval = list(map(Float, interval))
     if len(interval) == 2:
         points = [ (interval[1] - interval[0])/steps*i + interval[0] for i in range(steps+1) ]
@@ -1501,13 +1665,14 @@ def integrate_rectangle(expr, variable = Symbol('x'), interval = [0,1], steps = 
             max_value += values[i+1]*(points[i+1] - points[i])
             min_value += values[i]*(points[i+1] - points[i])
     return [ min_value, max_value ]
-#############################################################
-#############################################################
-#############################################################
-#                 Funciones de grafos
-#############################################################
-#############################################################
-#############################################################
+# Graph functions
+#   ____                 _         __                  _   _                 
+#  / ___|_ __ __ _ _ __ | |__     / _|_   _ _ __   ___| |_(_) ___  _ __  ___ 
+# | |  _| '__/ _` | '_ \| '_ \   | |_| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+# | |_| | | | (_| | |_) | | | |  |  _| |_| | | | | (__| |_| | (_) | | | \__ \
+#  \____|_|  \__,_| .__/|_| |_|  |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+#                 |_|
+#
 def getRoots(aNeigh):
     def findRoot(aNode,aRoot):
         while aNode != aRoot[aNode][0]:
@@ -1596,7 +1761,6 @@ def find_cycles_from(graph, startnode):
                     path.append(path[0])
                     cycles.append(path)
     return cycles
-# Las importantes.
 def find_all_cycles_of(graph, start, current = None, path = []):
     if current == None:
         current = start
@@ -1618,10 +1782,6 @@ def find_all_cycles_of(graph, start, current = None, path = []):
                 paths.append(path_to_add)
     return paths
 def find_all_wires(graph):
-    """
-    Encuentra todas las líneas sin ramificaciones
-    de un grafo.
-    """
     wires = []
     for i in list(graph.keys()):
         for j in graph[i]:
@@ -1670,13 +1830,13 @@ def complete_graph(p_graph):
         else:
             graph.update({i: begins})
     return graph
-#############################################################
-#############################################################
-#############################################################
-#                 Funciones circuitos
-#############################################################
-#############################################################
-#############################################################
+# Circuits
+#   ____ _                _ _       
+#  / ___(_)_ __ ___ _   _(_) |_ ___ 
+# | |   | | '__/ __| | | | | __/ __|
+# | |___| | | | (__| |_| | | |_\__ \
+#  \____|_|_|  \___|\__,_|_|\__|___/
+#
 class Circuit:
     def __init__(self, *params):
         style = ""
@@ -1716,7 +1876,7 @@ class Circuit:
         self.IntensityEq = {}
         self.Edges = [ [ 0 for l in self.graph[k] ] for k in list(self.graph.keys()) ]
         self.pstcirc = "\\begin{pspicture}"
-        # Analiza los datos del grafo para decidir la mejor distribución.
+        # Choose spatial node distribution
         if style == "":
             if self.edges/self.nnodes*1.2 < max_tmp:
                 style = "regpol"
@@ -1734,7 +1894,7 @@ class Circuit:
             self.pstcirc += self.gridcirc(base, high, 3)
         else:
             sys.exit("Error: style of circuit must be in [\"regpol\", \"grid\"]")
-        # Obtiene los ciclos más cortos.
+        # Gets shorter cycles
         all_cycles = []
         all_sets = []
         for k in self.nodes:
@@ -1757,7 +1917,7 @@ class Circuit:
             if new_edges:
                 self.sorted_cycles.append(k)
         sys.stderr.write("Ciclos independientes teóricos: "+str(self.short_cycles)+" reales: "+str(len(self.sorted_cycles))+"\n")
-        # Obtiene las líneas.
+        # Gets wires ------------------------
         self.wires = find_all_wires(self.complete)
         # Incluye los comando en latex para dibujar el gráfico.
         # Monta el circuito y prepara sus ecuaciones.
@@ -1827,9 +1987,9 @@ class Circuit:
         system_vars = list(i_vars|U_vars)
         A, B = syst2matrix(self.ReducedEq + self.NodeEq, system_vars)
         A, B = erase_units(A), erase_units(B)
-        X = (A**-1*B).evalf(digits)
+        X = (A**-1*B).evalf(__digits__)
         self.Solved = {system_vars[k]: X[k]*uA for k in range(len(system_vars))}
-        self.UEdges = {"U_{"+self._abc_[self.nodes.index(k)]+self._abc_[self.nodes.index(l)]+"}": evalf(subs(erase_units(self.Edges[list(self.graph.keys()).index(l)][self.graph[l].index(k)]), erase_units(self.Solved)), digits)*uV for l in list(self.graph.keys()) for k in self.graph[l] }
+        self.UEdges = {"U_{"+self._abc_[self.nodes.index(k)]+self._abc_[self.nodes.index(l)]+"}": evalf(subs(erase_units(self.Edges[list(self.graph.keys()).index(l)][self.graph[l].index(k)]), erase_units(self.Solved)), __digits__)*uV for l in list(self.graph.keys()) for k in self.graph[l] }
     ## Guarda las magnitudes del circuito en el formato adecuado
     def organize_data(self, data):
         self.i = data['i']
@@ -2030,13 +2190,14 @@ class Circuit:
 #                dipoles[k] = regexp.sub("\[.*\]", "", dipoles[k])
 #                dipoles[k] = regexp.sub("\{.*\}", "{}", dipoles[k])
 #        return dipoles
-#############################################################
-#############################################################
-#############################################################
-#                 Macros Gráficos
-#############################################################
-#############################################################
-#############################################################
+# Plotting
+#  ____  _       _   _   _             
+# |  _ \| | ___ | |_| |_(_)_ __   __ _ 
+# | |_) | |/ _ \| __| __| | '_ \ / _` |
+# |  __/| | (_) | |_| |_| | | | | (_| |
+# |_|   |_|\___/ \__|\__|_|_| |_|\__, |
+#                                |___/
+#
 from sympy import plotting
 # Gráfico 3D de la cinta de Moebius.
 # void plot_moebius_strip(str file)
@@ -2071,50 +2232,13 @@ def plot_saddle_point(_file):
     kwargs = {'title':'Punto de Silla', 'xlabel':'x', 'ylabel':'y', 'show':False}
     saddle_point = plotting.plot3d(x**2-y**2, (x,-1,1), (y,-1,1), **kwargs)
     saddle_point.save(_file)
-#############################################################
-#############################################################
-#############################################################
-#                 Herramientas
-#############################################################
-#############################################################
-#############################################################
-def mapi(list_fun, list_param):
-    return [ list_fun[i](param) for i, param in enumerate(list_param) ]
-# Resta a la primera lista la siguiente.
-def remove(_list, _elem):
-    _tmp = copy.deepcopy(_list)
-    for item_to_remove in _elem:
-        _tmp.remove(item_to_remove)
-    return _tmp
-#############################################################
-#        Funciones de generación aleatoria
-#############################################################
-def indexes(length, amount = 1):
-    result = []
-    indexes_list = list(range(length))
-    for i in range(amount):
-        tmp = randrange(length)
-        result.append(indexes_list[tmp])
-        del indexes_list[tmp]
-        length -= 1
-    return result
-def jumble(_x, items = 0):
-    shuffle(_x)
-    if items == 0:
-        _jumble = _x
-    else:
-        _jumble = tuple(_x[0:items])
-    return _jumble
-def randmags(start, end, amount, unit = 1):
-    result = indexes(end - start + 1, amount)
-    result = list(map(lambda x, s=start, u=unit: float(x + s)*u, result))
-    if amount == 1:
-        return result[0]
-    else:
-        return tuple(result)
-#############################################################
-#        Funciones reemplacamiento para regexp
-#############################################################
+# Eval functions
+#  _____            _     __                  _   _                 
+# | ____|_   ____ _| |   / _|_   _ _ __   ___| |_(_) ___  _ __  ___ 
+# |  _| \ \ / / _` | |  | |_| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+# | |___ \ V / (_| | |  |  _| |_| | | | | (__| |_| | (_) | | | \__ \
+# |_____| \_/ \__,_|_|  |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+#
 # Sustituye el valor de las variables en la cadena.
 def _repl_val_(_x):
     _str = _x.group(1)
@@ -2155,9 +2279,6 @@ def _repl_pow_pow_(_x):
     else:
         __repl_pow_rat_ = "{{" + _base + "}^{{" + _exp + "}^{" + _exp_exp + "}}}"
     return "Dummy('" + __repl_pow_rat_ + "')"
-#############################################################
-#                Funciones evaluación
-#############################################################
 # Evalua las variables indicadas
 # str symbol = evalvar(str string)
 def evalvar(_str):
@@ -2189,159 +2310,22 @@ def syeval(_x):
             _s[_i] = evalvar( _s[_i])
             _s[_i] = regexp.sub("([a-zA-Z_][a-zA-Z_0-9]*)($|[\)\]\}\+\-\*/ ,\:=])", "Dummy('\\1')\\2", _s[_i])
             _s[_i] = regexp.sub("(^|[\(\[\{\+\-\*/ ,\:=])(\-?[0-9]*\.?[0-9]+)", "\\1Dummy('\\2')", _s[_i])
-            _s[_i] = _s[_i].replace("/", "*Rational(1)/")
+            #_s[_i] = _s[_i].replace("/", "*Rational(1)/")
         _i += 2
-    return eval("'".join(_s))
+    return S("'".join(_s))
 # Evalua un expression symbol operándolo.
 # expression = evalsy(expression symbol syevalexpr)
 def evalsy(_x):
     _evals = regexp.sub("Dummy\('(\-?[0-9]*\.?[0-9]+)'\)", "\\1", tostr(_x))
     _evals = regexp.sub("Dummy\('([a-zA-Z_][a-zA-Z_0-9]*)'\)", "\\1", srepr(_x))
     return eval(_evals)
-#############################################################
-#     Funciones procesamiento de parámetros en strings
-#############################################################
-def delim(_s, begin = None, paren = [ "([{$", ")]}$" ], step = 1):
-    _m = [len(_s) - 1, 0]
-    _find = True
-    if step >= 0:
-        _inc = 1
-        _d = 0
-    else:
-        _inc = -1
-        _d = 1
-    if begin == None:
-        begin = _m[1-_d]
-    else:
-        if begin > _m[0]:
-            return None, None
-    while not _s[begin] in paren[_d]:
-        begin += _inc
-        if _inc*begin > _inc*_m[_d]:
-            _find = False
-            break
-    if not _find:
-        return None, None
-    end = begin
-    _de = ["", ""]
-    _de[_d] = _s[end]
-    if isinstance(paren, list):
-        _tmp = paren[_d].find(_de[_d])
-        _de[1-_d] = paren[1-_d][_tmp]
-    else:
-        _de[1-_d] = paren[1-_d]
-    _p = 1
-    while _p != 0:
-        end += _inc
-        if _inc*begin > _inc*_m[_d]:
-            _find = False
-            break
-        if _s[end] == _de[1-_d]:
-            _p -= 1
-        elif _s[end] == _de[_d]:
-            _p += 1
-    if _find:
-        if _inc == 1:
-            return begin, end
-        else:
-            return end, begin
-    else:
-        return None, None
-def arguments(s, begin = None, paren = [ "([{", ")]}" ], step = 1):
-    begin, end = delim(s, begin, paren, step)
-    if end == None:
-        return []
-    result = [ begin ]
-    pos = begin + 1
-    while pos < end:
-        if s[pos] in "([{$":
-            _, pos = delim(s, pos)
-        elif s[pos] == ",":
-            result.append(pos)
-        pos += 1
-    if pos != end:
-        raise NameError('Bloque sin cierre.')
-    result.append(end)
-    params = []
-    for index in range(len(result)-1):
-        params.append(s[result[index]+1:result[index+1]])
-    return params
-def iarguments(s, begin = None, paren = [ "([{", ")]}" ], step = 1):
-    begin, end = delim(s, begin, paren, step)
-    if end == None:
-        return [ -1 ]
-    result = [ begin ]
-    pos = begin + 1
-    while pos < end:
-        if s[pos] in "([{$":
-            _, pos = delim(s, pos)
-        elif s[pos] == ",":
-            result.append(pos)
-        pos += 1
-    if pos != end:
-        raise NameError('Bloque sin cierre.')
-    result.append(end)
-    return result
-def delim_fun(_s, _i, step = 1):
-    _v = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789."
-    _m = len(_s) - 1
-    _del = [ "([{$", ")]}$" ]
-    _lst = [ "([{+-*/ ,:=", ")]}+-*/ ,:=" ]
-    if step >= 0:
-        _inc = 1
-        _d = 0
-    else:
-        _inc = -1
-        _d = 1
-    while _s[_i] == " ":
-        _i += _inc
-    _j = _i
-    if _inc == 1:
-        while (_s[_j] in _v)&(_j != _m):
-            _j += _inc
-        while (_s[_j] == " ")&(_j != _m):
-            _j += _inc
-    if _s[_j] in _del[_d]:
-        _de = ["", ""]
-        _de[_d] = _s[_j]
-        _tmp = _del[_d].find(_de[_d])
-        _de[1-_d] = _del[1-_d][_tmp]
-        _p = 1
-        while _p != 0:
-            _j += _inc
-            if _s[_j] == _de[1-_d]:
-                _p -= 1
-            elif _s[_j] == _de[_d]:
-                _p += 1
-        if _inc == -1:
-            if _j != 0:
-                _j += _inc
-                while (_s[_j] in _v)&(_j != 0):
-                    _j += _inc
-                _j -= _inc
-    else:
-        while (not _s[_j] in _lst[1-_d])&(_j != _m)&(_j != 0):
-            _j += _inc
-        if _s[_j] in _lst[1-_d]:
-            _j -= _inc
-    if _inc == 1:
-        return _i, _j
-    else:
-        return _j, _i
-############################################################################
-############################################################################
-############################################################################
-######               Clases
-############################################################################
-############################################################################
-############################################################################
-#############################################################
-#############################################################
-#############################################################
-#                 Clases matemáticas
-#############################################################
-#############################################################
-#############################################################
+# Function classes
+#  _____                 _   _                     _                         
+# |  ___|   _ _ __   ___| |_(_) ___  _ __      ___| | __ _ ___ ___  ___  ___ 
+# | |_ | | | | '_ \ / __| __| |/ _ \| '_ \    / __| |/ _` / __/ __|/ _ \/ __|
+# |  _|| |_| | | | | (__| |_| | (_) | | | |  | (__| | (_| \__ \__ \  __/\__ \
+# |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|   \___|_|\__,_|___/___/\___||___/
+#
 # Devuelve la parte decimal del número.
 class decimal(Function):
     nargs = 1
@@ -2394,6 +2378,27 @@ class nneg(Function):
             return arg
         elif arg.is_negative:
             return 0
+# Sexagesimal classes
+#  ____                                 _                 _ 
+# / ___|  _____  ____ _  __ _  ___  ___(_)_ __ ___   __ _| |
+# \___ \ / _ \ \/ / _` |/ _` |/ _ \/ __| | '_ ` _ \ / _` | |
+#  ___) |  __/>  < (_| | (_| |  __/\__ \ | | | | | | (_| | |
+# |____/ \___/_/\_\__,_|\__, |\___||___/_|_| |_| |_|\__,_|_|
+#                       |___/                               
+#       _                         
+#   ___| | __ _ ___ ___  ___  ___ 
+#  / __| |/ _` / __/ __|/ _ \/ __|
+# | (__| | (_| \__ \__ \  __/\__ \
+#  \___|_|\__,_|___/___/\___||___/
+#
+# Pasa de decimal a sexagesimal.
+class dec2dms(Function):
+    @classmethod
+    def eval(cls, arg):
+        if isinstance(arg, (int, float, complex)):
+            mnt,sec = divmod(arg*3600,60)
+            deg,mnt = divmod(mnt,60)
+            return deg,mnt,sec
 # Clase forma compleja de grados, minutos y segundos.
 # Necesita: from __future__ import division
 class DMS:
@@ -2493,14 +2498,6 @@ class DMS:
         return self.__div__(other)
     def __rtruediv__(self, other):
         return self.__rdiv__(other)
-# Pasa de decimal a sexagesimal.
-class dec2dms(Function):
-    @classmethod
-    def eval(cls, arg):
-        if isinstance(arg, (int, float, complex)):
-            mnt,sec = divmod(arg*3600,60)
-            deg,mnt = divmod(mnt,60)
-            return deg,mnt,sec
 # Clase forma compleja de horas, minutos y segundos.
 # Necesita: from __future__ import division
 class HMS:
@@ -2670,143 +2667,33 @@ class HMS:
 # Freeze tiene problemas con Symbol ya que desaparece al
 # hacerlo str
 class Freeze:
-    def __init__(self, _str, frac = "dfrac", power = "rootint", factor = False):
-        functions = ["randrange", "randint", "indexes", "jumble"]
-        self.str = evalfun(evalvar( _str), functions)
-        self.eval = eval(self.str.replace("/", "*Rational(1)/"))
+    def __init__(self, _str, functions = [expand], frac = "dfrac"):
+        _functions = ["randrange", "randint", "indexes", "jumble"]
+        self.str = evalfun(evalvar( _str), _functions)
+        self.eval = S(self.str)
         self.frac = frac
-        self.power = power
-        self.factor = factor
-        self.evol()
-    def evol(self):
-        self.begin = self.str
-        for _i in ["**", "/", "*", "-", "+", "sqrt("]:
-            self.begin = self.str2latex(self.begin, _i)
+        self.evol(functions)
+    def evol(self, functions):
+        self.begin = str2tex(self.str)
         _tmp = self.eval
-        if self.factor:
-            _tmp = ifactor(_tmp)
-        self.end = str(_tmp)
-        for _i in ["**", "/", "*", "-", "+", "sqrt("]:
-            self.end = self.str2latex(self.end, _i)
-        self.end = self.end.replace("oo", "\\infty")
+        for _function in functions:
+            _tmp = _function(_tmp)
+        self.end = latex(_tmp)
         if self.frac != "frac":
             self.begin = self.begin.replace("\\frac","\\" + self.frac)
             self.end = self.end.replace("\\frac","\\" + self.frac)
-    def str2latex(self, _s, _op):
-        _i = _s.find(_op)
-        while _i != -1:
-            # comienza búsqueda por la derecha.
-            if _op[-1] == "(":
-                _j = _i + len(_op) - 1
-            else:
-                _j = _i + len(_op)
-            _ini, _fin = delim_fun(_s, _j)
-            _fino = _fin
-            if (_s[_ini] == "(")&(_s[_fin] == ")"):
-                _ini1 = _ini + 1
-                _fin1 = _fin - 1
-            else:
-                _ini1 = _ini
-                _fin1 = _fin
-            # comienza búsqueda por la izquierda.
-            if _i == 0:
-                _inio = 0
-                _ini0 = 1
-                _fin0 = 0
-            else:
-                if _op[-1] == "(":
-                    _inio = _i
-                else:
-                    _j = _i - 1
-                    _ini, _fin = delim_fun(_s, _j, -1)
-                    _inio = _ini
-                    if (_s[_ini] == "(")&(_s[_fin] == ")"):
-                        _ini0 = _ini + 1
-                        _fin0 = _fin - 1
-                    else:
-                        _ini0 = _ini
-                        _fin0 = _fin
-            if "**" == _op:
-                _tmp = self._Pow_((_s[_ini0:_fin0+1]), (_s[_ini1:_fin1+1]))
-                _spc = _inio + _tmp.find("^") + 1
-                _s = _s[:_inio] + _tmp + _s[_fino+1:]
-            elif "/" == _op:
-                _spc = _inio + _fin0+1 - _ini0 + 9
-                _s = _s[:_inio] + "{\\frac{" + (_s[_ini0:_fin0+1]) + "}{" + (_s[_ini1:_fin1+1]) + "}}" + _s[_fino+1:]
-            elif "*" == _op:
-                _tmp = self.sumquery((_s[_ini0:_fin0+1]))
-                _spc = _inio + len(_tmp) + 6
-                _s = _s[:_inio] + _tmp + "\\cdot " + self.sumquery((_s[_ini1:_fin1+1])) + _s[_fino+1:]
-            elif "-" == _op:
-                if _ini0 > _fin0:
-                    _spc = _inio + 1
-                    _s = _s[:_inio] + "-" + self.sumquery((_s[_ini1:_fin1+1])) + _s[_fino+1:]
-                else:
-                    _spc = _inio + _fin0+1 - _ini0 + 1
-                    _s = _s[:_inio] + (_s[_ini0:_fin0+1]) + "-" + self.sumquery((_s[_ini1:_fin1+1])) + _s[_fino+1:]
-            elif "+" == _op:
-                if _ini0 > _fin0:
-                    _spc = _inio + 1
-                    _s = _s[:_inio] + "+" + (_s[_ini1:_fin1+1]) + _s[_fino+1:]
-                else:
-                    _spc = _inio + _fin0+1 - _ini0 + 1
-                    _s = _s[:_inio] + (_s[_ini0:_fin0+1]) + "+" + (_s[_ini1:_fin1+1]) + _s[_fino+1:]
-            elif "sqrt(" == _op:
-                _spc = _inio + 7
-                _s = _s[:_inio] + "{\\sqrt{" + _s[_ini1:_fin1+1] + "}}" + _s[_fino+1:]
-            _i = _s.find(_op, _spc)
-        return _s
-    def _Pow_(self, _x, _y):
-        power = self.power
-        _tmp = _y
-        if power in ["root", "rootint"]:
-            _tmp = regexp.sub("^ *\(? *([\-\+]? *[a-zA-Z_.0-9]+ *)\)? */ *\(? *([\-\+]? *[a-zA-Z_.0-9]+ *)\)? *$", "'\\1', '\\2'", _y)
-        if _tmp != _y:
-            _num, _den = eval(_tmp)
-            if (regexp.match(" *[\-\+]? *[0-9]*\.?[0-9]+ *$", _den) != None)|(power == "root"):
-                if regexp.match(" *1(\.|\.0)? *$", _num) != None:
-                    if regexp.match(" *2(\.|\.0)? *$", _den) != None:
-                        __Pow_ = '{\\sqrt{' + _x + '}}'
-                    else:
-                        __Pow_ = '{\\sqrt[' + _den + ']{' + _x + '}}'
-                else:
-                    if regexp.match(" *2(\.|\.0)? *$", _den) != None:
-                        __Pow_ = '{\\sqrt{' + _x + '}^{' + _num + '}}'
-                    else:
-                        __Pow_ = '{\\sqrt[' + _den + ']{' + _x + '}^{' + _num + '}}'
-            else:
-                if (regexp.match(" *\+? *[0-9]*\.?[0-9]+ *$", _x) != None)|(regexp.match(" *\+? *[a-zA-Z_][a-zA-Z_0-9]* *$", _x) != None):
-                    __Pow_ = '{{' + _x + '}^{' + _y + '}}'
-                else:
-                    __Pow_ = '{{\\left(' + _x + '\\right)}^{' + _y + '}}'
-        else:
-            if (regexp.match(" *\+? *[0-9]*\.?[0-9]+ *$", _x) != None)|(regexp.match(" *\+? *[a-zA-Z_][a-zA-Z_0-9]* *$", _x) != None):
-                __Pow_ = '{{' + _x + '}^{' + _y + '}}'
-            else:
-                __Pow_ = '{{\\left(' + _x + '\\right)}^{' + _y + '}}'
-        return __Pow_
-    def sumquery(self, _s):
-        _tmp = _s
-        _tmp_new = regexp.sub("\{[^\}]*\}", "", regexp.sub("\[[^\]]*\]", "", regexp.sub("\([^\)]*\)", "", _tmp)))
-        while _tmp != _tmp_new:
-            _tmp = _tmp_new
-            _tmp_new = regexp.sub("\{[^\}]*\}", "", regexp.sub("\[[^\]]*\]", "", regexp.sub("\([^\)]*\)", "", _tmp)))
-        if ("+" in _tmp)|("-" in _tmp):
-            return "\\left(" + _s + "\\right)"
-        else:
-            return _s
 #############################################################
 #            Clases de generación aleatoria
 #############################################################
 class Cover:
     def __init__(self, *params):
         name = ""
-        self.first_round = True
-        self.space = 1
-        self.space_factors = []
+        self.__first_round__ = True
+        self.__space__ = 1
+        self.__space_factors__ = []
         for i in params:
             if isinstance(i, (int, float, complex)):
-                self.space = int(i)
+                self.__space__ = int(i)
             elif isinstance(i, str):
                 name = i
         if name != "":
@@ -2818,40 +2705,40 @@ class Cover:
                     if isinstance(eval("__main__." + name), Cover):
                         eval("__main__." + name + ".next()")
                     else:
-                        exec ("__main__." + name + " = Cover(" + str(self.space) + ")")
+                        exec ("__main__." + name + " = Cover(" + str(self.__space__) + ")")
                 else:
-                    exec ("__main__." + name + " = Cover(" + str(self.space) + ")")
+                    exec ("__main__." + name + " = Cover(" + str(self.__space__) + ")")
             else:
                 exec("import " + __modu__.__name__)
                 if name in dir(__modu__):
                     if isinstance(eval(__modu__.__name__ + "." + name), Cover):
                         eval("__modu__." + name + ".next()")
                     else:
-                        exec ("__modu__." + name + " = Cover(" + str(self.space) + ")")
+                        exec ("__modu__." + name + " = Cover(" + str(self.__space__) + ")")
                 else:
-                    exec ("__modu__." + name + " = Cover(" + str(self.space) + ")")
+                    exec ("__modu__." + name + " = Cover(" + str(self.__space__) + ")")
         else:
-            self.set_space(self.space)
-    def set_space(self, space):
-        self.space = space
-        self.tmp_space = 1
+            self.__set_space__(self.__space__)
+    def __set_space__(self, space):
+        self.__space__ = space
+        self.__tmp_space__ = 1
         if not hasattr(self, "start"):
-            self.start = randrange(self.space)
-        if self.space != 1:
-            self.randomness = self.start
-            self.current = self.randomness
-    def __next__(self):
-        if self.space == 1:
-            if self.tmp_space == 1:
+            self.__start__ = randrange(self.__space__)
+        if self.__space__ != 1:
+            self.__randomness__ = self.__start__
+            self.__current__ = self.__randomness__
+    def next(self):
+        if self.__space__ == 1:
+            if self.__tmp_space__ == 1:
                 sys.exit("Error: Cover.next: no se puede ejecutar next() sin semilla.")
-            self.set_space(self.tmp_space)
-        if self.first_round:
+            self.__set_space__(self.__tmp_space__)
+        if self.__first_round__:
         # Calcula el generador sólo la primera vez
         # de otro modo podría no recorrer todos los
         # valores puesto que la suma de dos generadores
         # no tiene porqué ser un generador.
             self.generator = 1
-            factors_len = len(self.space_factors)
+            factors_len = len(self.__space_factors__)
             # El contador recorre los números con todas
             # sus cifras distintas de cero.
             def randsafe(x):
@@ -2859,23 +2746,23 @@ class Cover:
                     return 0
                 else:
                     return randrange(x - 1) + 1
-            counter = [ randsafe(self.space_factors[i]) for i in range(factors_len) ]
+            counter = [ randsafe(self.__space_factors__[i]) for i in range(factors_len) ]
             positio = []
             for i in range(factors_len-1):
-                positio.append(self.space_factors[i])
+                positio.append(self.__space_factors__[i])
                 for j in range(i):
-                    positio[i] *= self.space_factors[j]
-            for k in range(self.space):
+                    positio[i] *= self.__space_factors__[j]
+            for k in range(self.__space__):
                 generator = counter[0] + 1
                 for i in range(factors_len-1):
                     generator += counter[i+1]*positio[i]
-                if gcd(generator, self.space) == 1:
+                if gcd(generator, self.__space__) == 1:
                     self.generator = generator
                     # Sale del bucle sobre k.
                     break
                 counter[0] += 1
                 for j in range(factors_len):
-                    if counter[j] == self.space_factors[j] - 1:
+                    if counter[j] == self.__space_factors__[j] - 1:
                         counter[j] = 0
                         if j == factors_len - 1:
                             counter[0] += 1
@@ -2884,17 +2771,19 @@ class Cover:
                     else:
                         # Sale del bucle sobre j.
                         break
-            self.first_round = False
-        self.randomness += self.generator
-        self.randomness %= self.space
-        self.current = self.randomness
+            self.__first_round__ = False
+        self.__randomness__ += self.generator
+        self.__randomness__ %= self.__space__
+        self.__current__ = self.__randomness__
         # Si ha recorrido todas las combinaciones
         # establece state = False
-        if self.randomness == self.start:
-            self.state =  False
+        if self.__randomness__ == self.__start__:
+            self.__state__ =  False
         else:
-            self.state = True
-        return self.state
+            self.__state__ = True
+        return self.__state__
+    def covered():
+        return self.__state__
     # Función a la que tienen que llamar todas las
     # funciones aleatorias, ya sea directamente o
     # a través de otras.
@@ -2903,19 +2792,19 @@ class Cover:
             a, b = 0, start
         else:
             a, b = start, stop
-        if self.space == 1:
+        if self.__space__ == 1:
             result = randrange(start, stop, step)
-            self.start += self.tmp_space*(result-a)//step
-            self.tmp_space *= (b - a)//step
-            if self.first_round:
-                self.space_factors.append((b - a)//step)
+            self.__start__ += self.__tmp_space__*(result-a)//step
+            self.__tmp_space__ *= (b - a)//step
+            if self.__first_round__:
+                self.__space_factors__.append((b - a)//step)
         else:
-            result = self.current % ((b - a)//step)
+            result = self.__current__ % ((b - a)//step)
             result *= step
             result += a
-            self.current //= ((b - a)//step)
-            if self.first_round:
-                self.space_factors.append((b - a)//step)
+            self.__current__ //= ((b - a)//step)
+            if self.__first_round__:
+                self.__space_factors__.append((b - a)//step)
         return int(result)
     def randint(self, a, b):
         return self.randrange(a, b + 1)
@@ -2946,10 +2835,161 @@ class Cover:
 #############################################################
 #############################################################
 #############################################################
-#           Clases para compilar latex
+#           Clases para latex
 #############################################################
 #############################################################
 #############################################################
+# Thanks to: http://stackoverflow.com/questions/3867028/converting-a-python-numeric-expression-to-latex
+import ast
+
+class LatexVisitor(ast.NodeVisitor):
+
+    def prec(self, n):
+        return getattr(self, 'prec_'+n.__class__.__name__, getattr(self, 'generic_prec'))(n)
+
+    def visit_Call(self, n):
+        func = self.visit(n.func)
+        args = ', '.join(map(self.visit, n.args))
+        if func == 'sqrt':
+            return '\sqrt{%s}' % args
+        else:
+            return r'\operatorname{%s}\left(%s\right)' % (func, args)
+
+    def prec_Call(self, n):
+        return 1000
+
+    def visit_Name(self, n):
+        return n.id
+
+    def prec_Name(self, n):
+        return 1000
+
+    def visit_UnaryOp(self, n):
+        if self.prec(n.op) > self.prec(n.operand):
+            return r'%s \left(%s\right)' % (self.visit(n.op), self.visit(n.operand))
+        else:
+            return r'%s %s' % (self.visit(n.op), self.visit(n.operand))
+
+    def prec_UnaryOp(self, n):
+        return self.prec(n.op)
+
+    def visit_BinOp(self, n):
+        if isinstance(n.op, ast.Div):
+            return r'\frac{%s}{%s}' % (self.visit(n.left), self.visit(n.right))
+        elif isinstance(n.op, ast.FloorDiv):
+            return r'\left\lfloor\frac{%s}{%s}\right\rfloor' % (self.visit(n.left), self.visit(n.right))
+
+        if self.prec(n.op) > self.prec(n.left):
+            left = r'\left(%s\right)' % self.visit(n.left)
+        else:
+            left = self.visit(n.left)
+        if self.prec(n.op) > self.prec(n.right):
+            right = r'\left(%s\right)' % self.visit(n.right)
+        # Added becuase 3 - ( 1 + 2 ) fails
+        elif self.prec(n.op) == self.prec(n.right) and isinstance(n.op, ast.Sub):
+            right = r'\left(%s\right)' % self.visit(n.right)
+        else:
+            right = self.visit(n.right)
+
+
+        if isinstance(n.op, ast.Pow):
+            return r'%s^{%s}' % (left, self.visit(n.right))
+        else:
+            return r'%s %s %s' % (left, self.visit(n.op), right)
+
+    def prec_BinOp(self, n):
+        return self.prec(n.op)
+
+    def visit_Sub(self, n):
+        return '-'
+
+    def prec_Sub(self, n):
+        return 300
+
+    def visit_Add(self, n):
+        return '+'
+
+    def prec_Add(self, n):
+        return 300
+
+    def visit_Mult(self, n):
+        return '\\cdot'
+
+    def prec_Mult(self, n):
+        return 400
+
+    def visit_Mod(self, n):
+        return '\\bmod'
+
+    def prec_Mod(self, n):
+        return 500
+
+    def prec_Pow(self, n):
+        return 700
+
+    def prec_Div(self, n):
+        return 400
+
+    def prec_FloorDiv(self, n):
+        return 400
+
+    def visit_LShift(self, n):
+        return '\\operatorname{shiftLeft}'
+
+    def visit_RShift(self, n):
+        return '\\operatorname{shiftRight}'
+
+    def visit_BitOr(self, n):
+        return '\\operatorname{or}'
+
+    def visit_BitXor(self, n):
+        return '\\operatorname{xor}'
+
+    def visit_BitAnd(self, n):
+        return '\\operatorname{and}'
+
+    def visit_Invert(self, n):
+        return '\\operatorname{invert}'
+
+    def prec_Invert(self, n):
+        return 800
+
+    def visit_Not(self, n):
+        return '\\neg'
+
+    def prec_Not(self, n):
+        return 800
+
+    def visit_UAdd(self, n):
+        return '+'
+
+    def prec_UAdd(self, n):
+        return 800
+
+    def visit_USub(self, n):
+        return '-'
+
+    def prec_USub(self, n):
+        return 800
+    def visit_Num(self, n):
+        return str(n.n)
+
+    def prec_Num(self, n):
+        return 1000
+
+    def generic_visit(self, n):
+        if isinstance(n, ast.AST):
+            return r'' % (n.__class__.__name__, ', '.join(map(self.visit, [getattr(n, f) for f in n._fields])))
+        else:
+            return str(n)
+
+    def generic_prec(self, n):
+        return 0
+# Usa la clase anterior como función
+def str2tex(expr):
+    pt = ast.parse(expr)
+    return LatexVisitor().visit(pt.body[0].value)
+# Compila latex
 class ani2eps:
     def __init__(self, name = ""):
         if name == "":
@@ -5044,16 +5084,132 @@ class RK4:
     Integra un sistema de ecuaciones diferenciales de primer grado.
 
     Las ecuaciones se darán como una lista de funciones.
+
+    RK4(lap, functions, initials)
+    
+    - lap       - Diferencial con el que se integrará.
+    - functions - Lista de funciones del sistema de ecuaciones diferenciales.
+                    El primer parámetro de las funciones siempre es el tiempo.
+    - initials  - Valores iniciales de las variables.
+                    La primera variable de la lista siempre es el tiempo.
+
+    Ejemplo 1
+    =========
+
+    Integra la ecuación diferencial: dx/dt = x
+    con la condición initial: t, x = 0, 1
+    cuyo resultado es: x = exp(t)
+
+    >>> num = RK4(0.001, [ lambda t, x: x ], [0, 1])
+    >>> num.iterate(3000)
+    >>> import matplotlib.pyplot as plt
+    >>> plt.plot(*num.x)
+    [<matplotlib.lines.Line2D object at 0x7fa710ff9ac8>]
+    >>> plt.show()
+
+    Ejemplo 2
+    =========
+
+    Integra el sistema: dx/dt = y, dy/dt = -x
+    con la condición inicial: t, x, y = 0, 1, 0
+    cuyo resultado es: x = cos(t), y = sin(t)
+
+    >>> num = RK4(0.001, [ lambda t, x, y: y, lambda t, x, y: -x ], [0, 1, 0])
+    >>> num.iterate(10000)
+    >>> from mpl_toolkits.mplot3d import Axes3D
+    >>> from matplotlib import rcParams
+    >>> import matplotlib.pyplot as plt
+    >>> fig = plt.figure()
+    >>> ax = fig.gca(projection='3d')
+    >>> ax.plot(num.x[1], num.x[2], num.x[0], 
+    ...         label = 'Curva paramétrica',
+    ...         color = 'DarkMagenta',
+    ...         linewidth = 3.2,
+    ...         linestyle = '-'             # alternativas - -- -. :
+    ...         )
+    [<mpl_toolkits.mplot3d.art3d.Line3D object at 0x7fdda7607a90>]
+    >>> rcParams['legend.fontsize'] = 11
+    >>> ax.legend()
+    <matplotlib.legend.Legend object at 0x7fdd9ff829e8>
+    >>> ax.set_xlabel('x')
+    <matplotlib.text.Text object at 0x7fdd9ff43198>
+    >>> ax.set_xlim(-1.2, 1.2)
+    (-1.2, 1.2)
+    >>> ax.set_ylabel('y')
+    <matplotlib.text.Text object at 0x7fdd9ff4ddd8>
+    >>> ax.set_ylim(-1.2, 1.2)
+    (-1.2, 1.2)
+    >>> ax.set_zlabel('t')
+    <matplotlib.text.Text object at 0x7fdd9ff547f0>
+    >>> ax.set_zlim(0, 10)
+    (0, 10)
+    >>> ax.set_title('Integración', va='bottom')
+    <matplotlib.text.Text object at 0x7fdd9ff63a58>
+    >>> ax.view_init(elev=8, azim=-57)
+    >>> ax.dist=9
+    >>> plt.show()
+
+
+    Ejemplo 3
+    =========
+
+    Atractor de Lorenz
+
+    >>> a = 10
+    >>> b = 28
+    >>> c = 8/3
+    >>> 
+    >>> num = RK4(0.001, [
+    ... lambda t, x, y, z: a*(y - x) ,
+    ... lambda t, x, y, z: x*(b - z) - y ,
+    ... lambda t, x, y, z: x*y - c*z
+    ... ], [0, 2, 2, 2])
+    >>> num.iterate(50000)
+    >>> 
+    >>> from mpl_toolkits.mplot3d import Axes3D
+    >>> from matplotlib import rcParams
+    >>> import matplotlib.pyplot as plt
+    >>> 
+    >>> fig = plt.figure()
+    >>> ax = fig.gca(projection='3d')
+    >>> ax.plot(num.x[1], num.x[2], num.x[3], 
+    ...         label = 'Curva paramétrica',
+    ...         color = 'Red',
+    ...         linewidth = 1.1,
+    ...         linestyle = '-'             # alternativas - -- -. :
+    ...         )
+    [<mpl_toolkits.mplot3d.art3d.Line3D object at 0x7fe95bc8c080>]
+    >>> rcParams['legend.fontsize'] = 11
+    >>> 
+    >>> ax.legend()
+    <matplotlib.legend.Legend object at 0x7fe954011b70>
+    >>> ax.set_xlabel('x')
+    <matplotlib.text.Text object at 0x7fe9540552e8>
+    >>> ax.set_xlim(min(num.x[1]), max(num.x[1]))
+    (-17.499147938424173, 19.239520723644926)
+    >>> ax.set_ylabel('y')
+    <matplotlib.text.Text object at 0x7fe95405ff28>
+    >>> ax.set_ylim(min(num.x[2]), max(num.x[2]))
+    (-23.244844690515738, 26.53721291767171)
+    >>> ax.set_zlabel('z')
+    <matplotlib.text.Text object at 0x7fe954064940>
+    >>> ax.set_zlim(min(num.x[3]), max(num.x[3]))
+    (1.9917108178406806, 47.170421907945084)
+    >>> ax.set_title('Atractor de Lorenz', va='bottom')
+    <matplotlib.text.Text object at 0x7fe954075ba8>
+    >>> 
+    >>> ax.view_init(elev=8, azim=-42)
+    >>> ax.dist=9
+    >>> plt.show()
     """
-    def __init__(self, lap, equations, initials):#, dh = None):
+    def __init__(self, lap, functions, initials):
         self.i = 0
         self.lap = lap
-        self.dim = len(equations) + 1
+        self.dim = len(functions) + 1
         if self.dim != len(initials):
-            sys.exit("RK4: equations+1 and initials have to be equals. Eq: "+str(len(equations))+" Ini: "+str(len(initials)) )
+            sys.exit("RK4: Requerido un valor inicial más que ecuaciones (para el tiempo). Eq: "+str(len(functions))+" Ini: "+str(len(initials)) )
         self.x = [ [float(initials[i])] for i in range(self.dim) ]
-        self.functions = equations
-#        self.dh = dh
+        self.functions = functions
     # Primer punto de Runge-Kutta.
     def rk0(self, fun, *x):
         return float(self.functions[fun-1](*x))
@@ -5069,13 +5225,14 @@ class RK4:
     def rk3(self, fun, *x):
         result = [ fun ] + [ x[0] + self.lap ] + [ x[i] + self.lap*self.rk2(i, *x) for i in range(1, self.dim) ]
         return self.rk0(*result)
+    # Calculo de iteraciones
     def iterate(self, points):
         for self.i in range(self.i, self.i + points):
             x = [ self.x[j][-1] for j in range(self.dim) ]
             # Cálculo de la siguiente iteración.
-            # Siguiente iteración temporal.
+              # Siguiente iteración temporal.
             self.x[0].append(x[0] + self.lap)
-            # Siguiente iteración espacial:
+              # Siguiente iteración espacial.
             for i in range(1, self.dim):
                 self.x[i].append(x[i] + self.lap/6.*(self.rk0(i, *x) + 2.*self.rk1(i, *x) + 2.*self.rk2(i, *x) + self.rk3(i, *x)))
 #            # Aplicamos la corrección de ligadura.
@@ -5131,9 +5288,13 @@ class ODE:
 #                 Funciones para impresión
 #############################################################
 def lp(expr, *params):
+    import __main__
+    if "__physics__" in dir(__main__):
+        simplify_units = __main__.__physics__
+    else:
+        simplify_units = __physics__
     dicti = {}
     split = 0
-    simplify_units = physics
     fmt = ""
     for param in params:
         if isinstance(param, bool):
@@ -5148,14 +5309,14 @@ def lp(expr, *params):
 #    if isinstance(expr, dict):
 #        Expr = srepr(expr.values())
 #        if "Float(" in Expr:
-#            expr = {k: expand(v.evalf(digits)) for k, v in expr.items() }
+#            expr = {k: expand(v.evalf(__digits__)) for k, v in expr.items() }
 #    else:
 #        Expr = srepr(expr)
 #        if "Float(" in Expr:
 #            if isinstance(expr, list):
-#                expr = [ expand(v.evalf(digits)) for v in expr ]
+#                expr = [ expand(v.evalf(__digits__)) for v in expr ]
 #            else:
-#                expr = expand(expr.evalf(digits))
+#                expr = expand(expr.evalf(__digits__))
     # Opera las unidades.
     if simplify_units:
         expr = physics_format(expr, dicti)
@@ -5352,470 +5513,11 @@ if len(sys.argv) > 1:
     #############################################################
     #############################################################
     if _outfile_ != "-":
-        print(r"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print(r"%%%")
-        print(r"%%% TeXLive 2012 sobre Linux")
-        print(r"%%%")
-        print(r"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print(r"\documentclass[9pt,spanish]{article}")
-        print(r"%% o")
-        print(r"%\documentclass[9pt,spanish]{extarticle}")
-        print(r"%% Necesario 'etex' por los muchos paquetes que se cargan.")
-        print(r"\usepackage{etex}")
-        print(r"\usepackage[utf8]{inputenc}")
-        print(r"%% 'babel' debe preceder a 'ntheorem' por incompatibilidades con")
-        print(r"%% 'thref'. No hace falta la opción 'spanish' si esta aparece en")
-        print(r"%% \documentclass.")
-        print(r"\usepackage{babel}")
-        print(r"\usepackage[T1]{fontenc}")
-        print(r"\usepackage{geometry}")
-        print(r"\geometry{verbose,a4paper, headheight=5mm, footskip=7mm}")
-        print(r"\geometry{left=19mm, right=16mm, top=37mm, bottom=23mm}")
-        print(r"%% 'amsmath' debe preceder a 'ntheorem' porque este último sobrescribe")
-        print(r"%% definiciones del primero.")
-        print(r"\usepackage{amsmath}")
-        print(r"\usepackage{amssymb}")
-        print(r"%% 'mathabx' rompe las llaves de \underbrace y \overbrace.")
-        print(r"%% en general 'mathabx' da muchos problemas ya que es")
-        print(r"%% incompatible con 'amsmath' y el paquete 'fourier'.")
-        print(r"%\usepackage{mathabx}")
-        print(r"\usepackage{amsxtra}")
-        print(r"\usepackage{mathtools}")
-        print(r"\usepackage{latexsym}")
-        print(r"\usepackage{bbm}")
-        print(r"\usepackage{framed}")
-        print(r"%% Si cargamos 'amsthm' tendremos que cambiar \newtheorem{proof}")
-        print(r"%% por \renewtheorem{proof} por estar definido ya en 'amsthm'.")
-        print(r"%% Debemos incluir [..amsmath..] vamos a usar 'ntheorem' junto con el.")
-        print(r"\usepackage[thmmarks,amsmath,hyperref]{ntheorem}")
-        print(r"\usepackage{dsfont}")
-        print(r"\usepackage{ulem}")
-        print(r"\usepackage{environ}")
-        print(r"\usepackage{varwidth}")
-        print(r"\usepackage{extarrows}")
-        print(r"\usepackage{braket}")
-        print(r"\usepackage{units}")
-        print(r"\usepackage{cancel}")
-        print(r"\usepackage{multicol}")
-        print(r"\usepackage{multirow}")
-        print(r"\usepackage{enumerate}")
-        print(r"\usepackage{array}")
-        print(r"\usepackage{eurosym}")
-        print(r"\usepackage{titlesec}")
-        print(r"\usepackage[stable]{footmisc}")
-        print(r"%\usepackage{xspace}")
-        print(r"\usepackage{fancyhdr}")
-        print(r"\usepackage{color}")
-        print(r"\usepackage{graphicx}")
-        print(r"\usepackage{epsfig}")
-        print(r"\usepackage{chemfig}")
-        print(r"\usepackage{pstricks}")
-        #print(r"\usepackage{pst-math}")
-        #print(r"\usepackage{pst-grad}")
-        print(r"\usepackage{pst-fractal}")
-        print(r"\usepackage{pst-circ}")
-        print(r"\usepackage{pst-coil}")
-        print(r"\usepackage{pst-plot}")
-        print(r"\usepackage{pst-solides3d}")
-        print(r"\usepackage{pst-eps}")
-        print(r"\usepackage{pstricks-add}")
-        print(r"\usepackage{animate}")
-        print(r"\usepackage{multido}")
-        print(r"\usepackage{grffile}")
-        print(r"\usepackage{wrapfig}")
-        print(r"\usepackage{ifthen}")
-        print(r"\usepackage{fancybox}")
-        print(r"%% Cargar 'empheq' despues de 'fancybox' y 'ntheorem',")
-        print(r"%% en el caso de 'fancybox' para que arregle")
-        print(r"%% incompatibilidades con \shadowbox.")
-        print(r"%% Arregla fallos de 'ntheorem' con el paquete 'thmmarks'")
-        print(r"%% por lo que es recomendable. La opción 'overload'")
-        print(r"%% fastidia todas las etiquetas.")
-        print(r"\usepackage[ntheorem]{empheq}")
-        print(r"\pagestyle{fancy}")
-        print(r"%% Último paquete 'hyperref'.")
-        print(r"%% debe cargarse antes del primer uso de \newtheorem o similares.")
-        print(r"\usepackage[bookmarks=true,bookmarksopen=true,bookmarksopenlevel=1]{hyperref}")
-        print(r"%% Aunque 'hyperref' debería ser el último paquete")
-        print(r"%% 'cleveref' modifica su comportamiento junto con")
-        print(r"%% el de otros como 'amsthm', 'ntheorem'...")
-        print(r"%% por lo que estará después de todos ellos.")
-        print(r"\usepackage{cleveref}")
-        print(r"")
-        print(r"%%%%%%%%%%%%%%%%%%%%%% Formato")
-        print(r"\fancyhead{}")
-        print(r"\rfoot{\thepage}")
-        print(r"\cfoot{}")
-        print(r"\lfoot{}")
-        print(r"\definecolor{partcolor}{rgb}{0,0,0.1}")
-        print(r"\definecolor{sectcolor}{rgb}{0,0,0.3}")
-        print(r"\definecolor{ssctcolor}{rgb}{0,0,0.5}")
-        print(r"\definecolor{ssstcolor}{rgb}{0,0,0.7}")
-        print(r"\renewcommand{\headrulewidth}{0pt}")
-        print(r"\titleformat{\part}[hang]{\huge\sc{\color{blue}\titlerule[1pt]\vspace{2pt}\titlerule[1pt]}}{\llap{\bf\color{blue}\thepart.}}{10pt}{\color{partcolor}}[{\color{blue}\titlerule[1pt]\vspace{2pt}\titlerule[1pt]}]")
-        print(r"\titleformat{\section}[hang]{\Large\sc}{\llap{\bf\color{blue}\thesection.}}{10pt}{\color{sectcolor}}[{\color{blue}\nobreak\titlerule[1pt]}]")
-        print(r"\titleformat{\subsection}[hang]{\large\bf}{\llap{\color{blue}\thesubsection.}}{7pt}{\color{ssctcolor}\underline}")
-        print(r"\titleformat{\subsubsection}[hang]{\normalsize\it}{\llap{\bf\color{blue}\thesubsubsection.}}{4pt}{\color{ssstcolor}}")
-        print(r"")
-        print(r"% PROPIEDADES DEL DOCUMENTO")
-        print(r"\parskip=3pt")
-        print(r"\parindent=15pt")
-        print(r"\renewcommand\arraystretch{2}")
-        print(r"\allowdisplaybreaks")
-        print(r"")
-        print(r"")
-        print(r"% FORMATO DE THEOREM")
-        print(r"\theoremstyle{marginbreak}")
-        print(r"\theoremheaderfont{\normalfont\bfseries}\theorembodyfont{\slshape}")
-        print(r"\theoremsymbol{\ensuremath{\diamondsuit}}")
-        print(r"\theoremseparator{:}")
-        print(r"%\theoremindent0cm")
-        print(r"%\theoremnumbering{greek}")
-        print(r"%\theoremprework{\bigskip\hrule}")
-        print(r"%\theorempostwork{\hrule\bigskip}")
-        print(r"\newtheorem{theorem}{Teorema}[subsection]")
-        print(r"\newtheorem{conjecture}{Conjetura}[subsection]")
-        print(r"")
-        print(r"\theoremstyle{marginbreak}")
-        print(r"\theoremsymbol{\ensuremath{\lozenge}}")
-        print(r"\theoremindent0.3cm")
-        print(r"%\theoremnumbering{greek}")
-        print(r"\newtheorem{lemma}[theorem]{Lema}")
-        print(r"")
-        print(r"\theoremstyle{marginbreak}")
-        print(r"\theoremsymbol{\ensuremath{\diamond}}")
-        print(r"\theoremindent0.5cm")
-        print(r"%\theoremnumbering{greek}")
-        print(r"\newtheorem{proposition}[theorem]{Proposición}")
-        print(r"")
-        print(r"\theoremstyle{marginbreak}")
-        print(r"\theoremsymbol{\ensuremath{\diamondsuit}}")
-        print(r"\theoremindent0cm")
-        print(r"%\theoremnumbering{arabic}")
-        print(r"\newtheorem{corollary}[theorem]{Corolario}")
-        print(r"")
-        print(r"\theoremstyle{margin}")
-        print(r"\theoremsymbol{\ensuremath{\triangle}}")
-        print(r"\theoremseparator{.}")
-        print(r"%\theoremprework{\bigskip\hrule}")
-        print(r"%\theorempostwork{\hrule\bigskip}")
-        print(r"\newtheorem{definition}[theorem]{Definición}")
-        print(r"")
-        print(r"\theoremheaderfont{\sc}\theorembodyfont{\upshape}")
-        print(r"\theoremstyle{nonumberbreak}")
-        print(r"\theoremseparator{}")
-        print(r"\theoremsymbol{\rule{1ex}{1ex}}")
-        print(r"\newtheorem{proof}{Demostración}")
-        print(r"")
-        print(r"")
-        print(r"% FORMATO DE APARTADOS")
-        print(r"\newcounter{miproblema}")
-        print(r"\newcounter{miapartado}")
-        print(r"\newboolean{soluciones}")
-        print(r"\newboolean{aeps}")
-        print(r"")
-        print(r"\setcounter{miproblema}{0}")
-        print(r"\setcounter{miapartado}{0}")
-        print(r"\setboolean{soluciones}{true}")
-        print(r"\setboolean{aeps}{false}")
-        print(r"")
-        print(r"\newcommand{\sinsoluciones}{\setboolean{soluciones}{false}}")
-        print(r"\newcommand{\consoluciones}{\setboolean{soluciones}{true}}")
-        print(r"\newcommand{\paraeps}{\setboolean{aeps}{true}}")
-        print(r"")
-        print(r"\newcommand{\reiniproblema}{\setcounter{miproblema}{0}}")
-        print(r"\newcommand{\reiniapartado}{\setcounter{miapartado}{0}}")
-        print(r"")
-        print(r"\newcommand{\problema}{\addtocounter{miproblema}{1}")
-        print(r"\medskip")
-        print(r"\pdfbookmark[1]{Problema \arabic{miproblema}}{problema\arabic{miproblema}}")
-        print(r"\ifthenelse{ \boolean{soluciones} }{ \noindent\rule{\linewidth}{5pt} }{}")
-        print(r"\noindent")
-        print(r"{\it \large \arabic{miproblema}}.")
-        print(r"\setcounter{miapartado}{0}")
-        print(r"}")
-        print(r"")
-        print(r"\newenvironment{probl}[1][.5]{")
-        print(r"\addtocounter{miproblema}{1}")
-        print(r"\ifthenelse{ \boolean{aeps} }{ \clearpage\thispagestyle{empty}\begin{TeXtoEPS}\begin{varwidth}{#1\linewidth}\parskip=3pt }{ \medskip")
-        print(r"\pdfbookmark[1]{Problema \arabic{miproblema}}{problema\arabic{miproblema}}")
-        print(r"\ifthenelse{ \boolean{soluciones} }{ \noindent\rule{\linewidth}{5pt} }{}  }")
-        print(r"\noindent")
-        print(r"{\it \large \arabic{miproblema}}.")
-        print(r"\setcounter{miapartado}{0}")
-        print(r"}{")
-        print(r"\ifthenelse{ \boolean{aeps} }{ \end{varwidth}\end{TeXtoEPS} }{}")
-        print(r"}")
-        print(r"")
-        print(r"\newenvironment{probl*}[1][.5]{")
-        print(r"\ifthenelse{ \boolean{aeps} }{ \clearpage\thispagestyle{empty}\begin{TeXtoEPS}\begin{varwidth}{#1\linewidth}\parskip=3pt }{ \medskip")
-        print(r"\ifthenelse{ \boolean{soluciones} }{ \noindent\rule{\linewidth}{5pt} }{}  }")
-        print(r"\noindent")
-        print(r"\setcounter{miapartado}{0}")
-        print(r"}{")
-        print(r"\ifthenelse{ \boolean{aeps} }{ \end{varwidth}\end{TeXtoEPS} }{}")
-        print(r"}")
-        print(r"")
-        print(r"\newcommand{\apartado}{\addtocounter{miapartado}{1}")
-        print(r"\pdfbookmark[2]{Apartado \alph{miapartado}}{problema\arabic{miproblema}apartado\alph{miapartado}}")
-        print(r"\smallskip")
-        print(r"\quad {\it \alph{miapartado}}.")
-        print(r"}")
-        print(r"")
-        print(r"\newenvironment{apartadocols}{")
-        print(r"\ifthenelse{\boolean{soluciones}}{}{\columnseprule=2pt\begin{multicols}{2}\leftskip=\parindent \parindent=0pt}")
-        print(r"}{")
-        print(r"\ifthenelse{\boolean{soluciones}}{}{\end{multicols}}")
-        print(r"}")
-        print(r"")
-        print(r"%\newsavebox\boxtextooculto")
-        print(r"\newboolean{textoocultoenmarcado}")
-        print(r"\setboolean{textoocultoenmarcado}{true}")
-        print(r"\newcommand{\solucionessinmarco}{\setboolean{textoocultoenmarcado}{false}}")
-        print(r"\newcommand{\solucionesconmarco}{\setboolean{textoocultoenmarcado}{true}}")
-        print(r"%\newenvironment{textooculto}")
-        print(r"%{\setbox\boxtextooculto\vbox\bgroup}")
-        print(r"%{\egroup\ifthenelse{\boolean{soluciones}}{\par\unvbox\boxtextooculto}{}}")
-        print(r"")
-        print(r"%\newenvironment{sol}{")
-        print(r"%\begin{textooculto}")
-        print(r"%\vspace{\parskip}")
-        print(r"%\ifthenelse{\boolean{textoocultoenmarcado}}{\noindent\rule[-6pt]{1pt}{7pt}\rule{\linewidth}{1pt}\rule[-6pt]{1pt}{7pt}}{}")
-        print(r"%")
-        print(r"%}{")
-        print(r"%")
-        print(r"%\ifthenelse{\boolean{textoocultoenmarcado}}{\noindent\rule{1pt}{7pt}\rule{\linewidth}{1pt}\rule{1pt}{7pt}}{}")
-        print(r"%\end{textooculto}")
-        print(r"%")
-        print(r"%}")
-        print(r"")
-        print(r"\NewEnviron{sol}{\ifthenelse{\boolean{soluciones}}{")
-        print(r"\vspace{\parskip}")
-        print(r"\ifthenelse{\boolean{textoocultoenmarcado}}{")
-        print(r"\ifthenelse{\boolean{aeps}}{\noindent\rule[-6.6pt]{.4pt}{7pt}\hrulefill\rule[-6.6pt]{.4pt}{7pt}}")
-        print(r"{\noindent\rule[-6pt]{1pt}{7pt}\rule{\linewidth}{1pt}\rule[-6pt]{1pt}{7pt}}}{}")
-        print(r"")
-        print(r"\BODY")
-        print(r"")
-        print(r"\ifthenelse{\boolean{textoocultoenmarcado}}{")
-        print(r"\ifthenelse{\boolean{aeps}}{\noindent\rule{.4pt}{7pt}\hrulefill\rule{.4pt}{7pt}}")
-        print(r"{\noindent\rule{1pt}{7pt}\rule{\linewidth}{1pt}\rule{1pt}{7pt}}}{}")
-        print(r"}{}}")
-        print(r"")
-        print(r"\newcommand{\solucion}[2][__hueco__]{\ifthenelse{\boolean{soluciones}}{#2}{\ifthenelse{\equal{#1}{__hueco__}}{\phantom{#2}}{#1}}}")
-        print(r"\newcommand{\Osolbox}[2]{\noindent\Ovalbox{\parbox{\linewidth}{\ifthenelse{\boolean{soluciones}}{#2}{#1}\hfill}}}")
-        print(r"")
-        print(r"%\newcommand{\myweb}{http://curiosidad-racional.blogspot.com}")
-        print(r"\newcommand{\myweb}{http://curiosidad-racional.tk}")
-        print(r"")
-        print(r"% PRESENTACION")
-        print(r"\newcommand{\presentacion}[4][c]{")
-        print(r"\hypersetup{pdfauthor={H\'ector Enr\'iquez},pdftitle={#3}}")
-        print(r"\begin{titlepage}")
-        print(r"\thispagestyle{empty}")
-        print(r"{\vspace*{0pt plus 1fill}\begin{center} \large #2 \end{center}}")
-        print(r"{\vspace{1cm}\begin{center} \scshape \huge #3 \end{center}}")
-        print(r"{\vspace{1cm}\begin{center}")
-        print(r"\href{\myweb}{\myweb}")
-        print(r"\end{center}}")
-        print(r"{\vspace{0pt plus 4fill}\begin{flushright} \footnotesize \underline{\hspace*{5cm}}\\")
-        print(r"#4 \end{flushright}}")
-        print(r"\end{titlepage}")
-        print(r"\ifthenelse{\equal{#1}{c}}{")
-        print(r"\lhead{#2}")
-        print(r"\chead{\scshape #3}")
-        print(r"\rhead{#4}")
-        print(r"\lfoot{\href{\myweb}{\myweb}}")
-        print(r"} % Cabecera completa [c]")
-        print(r"{")
-        print(r"\ifthenelse{\equal{#1}{t}}{")
-        print(r"\chead{\scshape #3}")
-        print(r"} % Solo titulo [t]")
-        print(r"{} % Vacia []")
-        print(r"}")
-        print(r"}")
-        print(r"")
-        print(r"\newcommand{\curiosidadracional}{")
-        print(r"\hypersetup{pdfauthor={H\'ector Enr\'iquez}}")
-        print(r"\lfoot{\href{\myweb}{\myweb}}")
-        print(r"}")
-        print(r"")
-        print(r"")
-        print(r"\newboolean{nombrealumno}")
-        print(r"\setboolean{nombrealumno}{false}")
-        print(r"\newcommand{\nombrealumno}{}")
-        print(r"\newcommand{\examen}[3]{")
-        print(r"\thispagestyle{empty}")
-        print(r"\renewcommand{\arraystretch}{2.2}")
-        print(r"\begin{tabular}{|c|p{8cm}|p{4.5cm}|}")
-        print(r"\hline")
-        print(r"\multirow{3}{2.5cm}{\centering\includegraphics[width=73pt,height=80pt]{Escudo.eps}} & ")
-        print(r" \multicolumn{2}{c|}{ #1 } \tabularnewline")
-        print(r" &  \multicolumn{2}{c|}{ #2 } \tabularnewline")
-        print(r"\cline{2-3}")
-        print(r" & \multicolumn{2}{l|}{Alumno:} \tabularnewline")
-        print(r"\hline")
-        print(r"Curso #3 & Fecha: & Calificación: \\")
-        print(r"\hline")
-        print(r"\end{tabular}")
-        print(r"\renewcommand{\arraystretch}{2}")
-        print(r"}")
-        print(r"")
-        print(r"")
-        print(r"% CONFIGURACIÓN MATEMÁTICAS")
-        print(r"")
-        print(r"\setcounter{MaxMatrixCols}{100}")
-        print(r"%%% Tamaños de texto en fórmulas \DeclareMathSizes{ds}{ts}{ss}{sss}")
-        print(r"%%% Al principio de toda ecuación \everymath{...} ejemplo \everymath{\displaystyle}")
-        print(r"")
-        print(r"% CONFIGURACIÓN COLOR")
-        print(r"")
-        print(r"\definecolor{ashgrey}{rgb}{0.7, 0.75, 0.71}")
-        print(r"\definecolor{earthyellow}{rgb}{0.88, 0.66, 0.37}")
-        print(r"\definecolor{ferrarired}{rgb}{1.0, 0.11, 0.0}")
-        print(r"\definecolor{indigo}{rgb}{0.0, 0.25, 0.42}")
-        print(r"\definecolor{palatinateblue}{rgb}{0.15, 0.23, 0.89}")
-        print(r"\definecolor{electricblue}{rgb}{0.49, 0.98, 1.0}")
-        print(r"\definecolor{blue(pigment)}{rgb}{0.2, 0.2, 0.6}")
-        print(r"\definecolor{green(pigment)}{rgb}{0.0, 0.65, 0.31}")
-        print(r"\definecolor{red(pigment)}{rgb}{0.93, 0.11, 0.14}")
-        print(r"\definecolor{burgundy}{rgb}{0.5, 0.0, 0.13}")
-        print(r"\definecolor{melon}{rgb}{0.99, 0.74, 0.71}")
-        print(r"\definecolor{peach}{rgb}{1.0, 0.9, 0.71}")
-        print(r"\definecolor{apricot}{rgb}{0.98, 0.81, 0.69}")
-        print(r"\definecolor{aqua}{rgb}{0.0, 1.0, 1.0}")
-        print(r"\definecolor{aquamarine}{rgb}{0.5, 1.0, 0.83}")
-        print(r"\definecolor{orangered}{rgb}{1.0, 0.27, 0.0}")
-        print(r"\definecolor{persianrose}{rgb}{1.0, 0.16, 0.64}")
-        print(r"\definecolor{persianred}{rgb}{0.8, 0.2, 0.2}")
-        print(r"\definecolor{radicalred}{rgb}{1.0, 0.21, 0.37}")
-        print(r"\definecolor{uared}{rgb}{0.85, 0.0, 0.3}")
-        print(r"\definecolor{fluorescentyellow}{rgb}{0.8, 1.0, 0.0}")
-        print(r"\definecolor{cadetblue}{rgb}{0.37, 0.62, 0.63}")
-        print(r"\definecolor{burlywood}{rgb}{0.87, 0.72, 0.53}")
-        print(r"\definecolor{columbiablue}{rgb}{0.61, 0.87, 1.0}")
-        print(r"")
-        print(r"% MACROS")
-        print(r"")
-        print(r"\newcommand{\I}{\mathbbm{i}}")
-        print(r"\newcommand{\Dx}{\Delta x}")
-        print(r"\newcommand{\Dy}{\Delta y}")
-        print(r"\newcommand{\Dz}{\Delta z}")
-        print(r"\newcommand{\entonces}{\quad\Rightarrow\quad}")
-        print(r"\newcommand{\barrainv}{$\backslash$}")
-        print(r"\newcommand{\ufrac}[3][.6ex]{\left.\raisebox{#1}{$#2$}\negmedspace{\bigm/}\negmedspace\raisebox{-#1}{$#3$}\right.}")
-        print(r"\newcommand{\ifrac}[3][.6ex]{\left.\raisebox{#1}{$#2$}\negmedspace\middle/\negmedspace\raisebox{-#1}{$#3$}\right.}")
-        print(r"%\newcommand{\ifrac}[2]{\nicefrac{\displaystyle #1}{\displaystyle #2}}")
-        print(r"\newcommand{\adfrac}[2]{\mathchoice{\frac{#1}{#2}}{\nicefrac{#1}{#2}} {\frac{#1}{#2}}{\nicefrac{#1}{#2}}}")
-        print(r"")
-        print(r"")
-        print(r"")
-        print(r"%\newcommand{\norm}[1]{\left| #1 \right|}")
-        print(r"%\newcommand{\nnorm}[1]{\left\| #1 \right\|}")
-        print(r"%\newcommand{\nnnorm}[1]{\left\vvvert #1 \right\vvvert}")
-        print(r"%\newcommand{\llaves}[1]{\left\{ #1 \right\}}")
-        print(r"%\newcommand{\parent}[1]{\left( #1 \right)}")
-        print(r"%\newcommand{\corchetes}[1]{\left[ #1 \right]}")
-        print(r"%% 'DeclarePairedDelimiter' tiene funcionalidades interesantes.")
-        print(r"%% \ceil*{x} añade \left y \right para adecuarse al tamaño,")
-        print(r"%% \ceil[\Big]{x} usa el tamaño 'Big', etc.")
-        print(r"\DeclarePairedDelimiter{\norm}{|}{|}")
-        print(r"\DeclarePairedDelimiter{\nnorm}{\|}{\|}")
-        print(r"\DeclarePairedDelimiter{\nnnorm}{\vvvert}{\vvvert}")
-        print(r"\DeclarePairedDelimiter{\llaves}{\{}{\}}")
-        print(r"\DeclarePairedDelimiter{\parentesis}{(}{)}")
-        print(r"\DeclarePairedDelimiter{\corchetes}{[}{]}")
-        print(r"")
-        print(r"\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}")
-        print(r"\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}")
-        print(r"")
-        print(r"")
-        print(r"\newcommand\ru{\bgroup\markoverwith")
-        print(r"{\textcolor{red}{\rule[-0.5ex]{2pt}{0.4pt}}}\ULon}")
-        print(r"")
-        print(r"\newcommand\rs{\bgroup\markoverwith")
-        print(r"{\textcolor{red}{\rule[0.5ex]{2pt}{0.4pt}}}\ULon}")
-        print(r"")
-        print(r"")
-        print(r"")
-        print(r"\newdimen\errorsize \errorsize=0.2pt")
-        print(r"% Frame with a label at top")
-        print(r"\newcommand\LabFrame[2]{%")
-        print(r"    \fboxrule=\FrameRule")
-        print(r"    \fboxsep=-\errorsize")
-        print(r"    \textcolor{FrameColor}{%")
-        print(r"    \fbox{%")
-        print(r"      \vbox{\nobreak")
-        print(r"      \advance\FrameSep\errorsize")
-        print(r"      \begingroup")
-        print(r"        \advance\baselineskip\FrameSep")
-        print(r"        \hrule height \baselineskip")
-        print(r"        \nobreak")
-        print(r"        \vskip-\baselineskip")
-        print(r"      \endgroup")
-        print(r"      \vskip 0.5\FrameSep")
-        print(r"      \hbox{\hskip\FrameSep \strut")
-        print(r"        \textcolor{TitleColor}{\textbf{#1}}}%")
-        print(r"      \nobreak \nointerlineskip")
-        print(r"      \vskip 1.3\FrameSep")
-        print(r"      \hbox{\hskip\FrameSep")
-        print(r"        {\normalcolor#2}%")
-        print(r"        \hskip\FrameSep}%")
-        print(r"      \vskip\FrameSep")
-        print(r"    }}%")
-        print(r"}}")
-        print(r"\definecolor{FrameColor}{rgb}{0.25,0.25,1.0}")
-        print(r"\definecolor{TitleColor}{rgb}{1.0,1.0,1.0}")
-        print(r"")
-        print(r"\newenvironment{contlabelframe}[2][\Frame@Lab\ (cont.)]{% ")
-        print(r"  % Optional continuation label defaults to the first label plus")
-        print(r"  \def\Frame@Lab{#2}%")
-        print(r"  \def\FrameCommand{\LabFrame{#2}}%")
-        print(r"  \def\FirstFrameCommand{\LabFrame{#2}}%")
-        print(r"  \def\MidFrameCommand{\LabFrame{#1}}%")
-        print(r"  \def\LastFrameCommand{\LabFrame{#1}}%")
-        print(r"  \MakeFramed{\advance\hsize-\width \FrameRestore} ")
-        print(r"}{\endMakeFramed} ")
-        print(r"\newcounter{cajatitulada}")
-        print(r"\newenvironment{cajatitulada}[1]{%")
-        print(r"  \par")
-        print(r"  \refstepcounter{cajatitulada}%")
-        print(r"  \begin{contlabelframe}{Definición \thecajatitulada:\quad #1}")
-        print(r"%  \begin{contlabelframe}{#1}")
-        print(r" \noindent\ignorespaces}")
-        print(r"{\end{contlabelframe}} ")
-        print(r"")
-        print(r"")
-        print(r"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print(r"%%%")
-        print(r"%%%   Documentación de Errores de Uso")
-        print(r"%%%")
-        print(r"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print(r"")
-        print(r"")
-        print(r"%%% 'split'")
-        print(r"%% Dentro de los entornos matemáticos 'split' no debe abarcar todo el")
-        print(r"%% contenido pues se entiende que entonces el entorno matemático")
-        print(r"%% debería ser 'align' u otras opciones. Si aun así se quiere usar")
-        print(r"%% 'split' para que funcione deberemos ponerlo entre llaves.")
-        print(r"%%")
-        print(r"%% Ejs.")
-        print(r"%%")
-        print(r"%% \[ {\begin{split}")
-        print(r"%%   parte_1 \\")
-        print(r"%%   parte_2")
-        print(r"%% \end{split}} \]")
-        print(r"%%")
-        print(r"%% \begin{equation}")
-        print(r"%%   {\begin{split}")
-        print(r"%%     parte_1 \\")
-        print(r"%%     parte_2")
-        print(r"%%   \end{split}}")
-        print(r"%% \end{equation}")
-        print(r"")
-        print(r"")
-        print(r"")
-        print(r"")
+        __path__ = os.path.realpath(os.path.dirname(sys.argv[0]))
+        __path__ = __path__[:__path__.rfind("/")]
+        __model_ltx__ = open(__path__+"/latex/modelo.ltx", "r")
+        for line in __model_ltx__:
+            print(line, end="")
     print(r"\begin{document}")
     print(r"\curiosidadracional")
     py2ltx(_infile_)
