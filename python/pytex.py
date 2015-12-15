@@ -5519,7 +5519,7 @@ if len(sys.argv) > 1:
         for line in __model_ltx__:
             print(line, end="")
     print(r"\begin{document}")
-    print(r"\curiosidadracional")
+    print(r"")
     py2ltx(_infile_)
     print(r"")
     print(r"\end{document}")

@@ -29,3 +29,39 @@ Add two lines to `.bashrc` file.
  `py2pdf [.ptx file]`
 - .ptx file to .pdf files with and without solutions.
  `py2pdf -s [.ptx file]`
+
+## Usage without scripts (for example on Windows)
+
+- .ptx file to .ltx file.
+ `python3 /path/to/Python-Latex/python/pytex.py [.ptx file]`
+
+## Basic example
+
+.ptx file: `sample.ptx`
+
+```
+\begin{equation}
+7! = ««factorial(7)»»
+\end{equation}
+```
+
+Command line
+
+```
+$ python3 pytex.py sample.ptx 
+% Python-Sympy -> LaTeX success.
+```
+
+Output
+
+```
+[... Latex preamble ...]
+
+\begin{document}
+
+\begin{equation}
+7! = 5040
+\end{equation}
+
+\end{document}
+```
