@@ -48,7 +48,7 @@ Add two lines to `.bashrc` file.
 Command line
 
 ```
-$ python3 pytex.py sample.ptx 
+$ python3 /path/to/Python-Latex/python/pytex.py sample.ptx 
 % Python-Sympy -> LaTeX success.
 ```
 
